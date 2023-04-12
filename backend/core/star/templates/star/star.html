@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="star_content" >    
+    <div class="">
+        <div class="content">
+            <div class="welcome">
+                <button id="openbutton" class="openbtn" >&#9776;</button>
+                <span class="welcome-text">Add a variable star</span> 
+            </div>
+
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="inputContainer Star">
+                    {{ form.auid.label }}<br>
+                    {{ form.auid(size=20) }}
+                    {% for error in form.auid.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div class="inputContainer Star">
+                    {{ form.name.label }}<br>
+                    {{ form.name(size=20) }}
+                    {% for error in form.name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div class="inputContainer Star">
+                    {{ form.const.label }}<br>
+                    {{ form.const(size=20) }}
+                    {% for error in form.const.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div class="buttons">   
+                    {{ form.submit(class="starAdd btn") }}
+                </div> 
+            </form>
+            <!-- Star Delete Error alert -->
+            {% if check %}
+                <div class="alert alert-warning" role="alert">
+                    <span class="closebtns" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{check}}
+                </div>
+            {% endif %}
+            <!-- End Task Delete error alert -->
+
+            <form action="" method="post">
+              {{ form.hidden_tag() }} <!-- csrf token for security -->
+
+              <div class="tabs effect-1">
+                 <!-- tab-content -->
+                <div class="tab-content">
+                  <section id="tab-item-1">
+                      <ul class="starList">        
+                          {% for star in star %} 
+                          <li class="currentStarItem">
+
+                              <label for="{{ star.id }}"><span class="complete-">{{ star.name }}</span></label>
+                            
+                              <button class="starDelete " name="starDelete" formnovalidate="" type="submit" ><i class="fa fa-trash-o icon"></i></button>
+                          </li>     
+                          {% endfor %}
+                      </ul> <!--end All-Tasks-List -->
+                  </section>
+                </div><!-- end tab content -->
+              </div><!-- end tab effect -->
+            </form>
+        </div><!-- end content -->
+
+    </div><!-- container -->
+</div>
+{% endblock %}
