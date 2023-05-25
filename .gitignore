@@ -12,6 +12,7 @@ backend/variable_stars.db
 backend/vsxdata.db
 backend/dump.sql
 data/vsxdata.csv
+/build
 
 #ignore virtual environment
 backend/env

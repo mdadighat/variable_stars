@@ -9,6 +9,11 @@ class Vsxdata(db.Model):
     ra = db.Column(db.String(140))
     dec = db.Column(db.String(140))
     varType = db.Column(db.String(140), default="n/a")
+    maxMag = db.Column(db.String(140), default="n/a")
+    maxPass = db.Column(db.String(140), default="n/a")
+    minMag = db.Column(db.String(140), default="n/a")
+    minPass = db.Column(db.String(140), default="n/a")
+    period = db.Column(db.String(140), default="n/a")
     #category= db.Column(db.String, db.ForeignKey('category.id'))
 
     def __repr__(self):
