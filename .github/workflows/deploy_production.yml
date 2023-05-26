@@ -21,7 +21,8 @@ jobs:
           username: ${{ secrets.PRODUCTION_USERNAME }}
           password: ${{ secrets.PRODUCTION_PASSWORD }}
           script: |
-            cd /var/www/variable_stars
+            cd /var/www/tauridos/html/variable_stars
             git pull origin main
             npm install && npm run build
+            cp build/* ../
             pm2 reload all
