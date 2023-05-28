@@ -58,7 +58,7 @@ export default function SidebarLayout({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
+    <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
@@ -161,7 +161,7 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
-    <Flex
+    <><div style={{position:"sticky", top:0, left:0,right:0}} ><Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
@@ -176,15 +176,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
-        icon={<FiMenu />}
-      />
+        icon={<FiMenu />} />
 
       <Text
         display={{ base: 'flex', md: 'none' }}
         fontSize="2xl"
         fontFamily="monospace"
         fontWeight="bold">
-        Logo
+        Variable Stars
       </Text>
 
       <HStack spacing={{ base: '0', md: '4' }}>
@@ -192,11 +191,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           size="lg"
           variant="ghost"
           aria-label="open menu"
-          icon={<FiBell />}
-        />
+          icon={<FiBell />} />
         <ColorModeSwitcher />
-        
+
       </HStack>
     </Flex>
+    </div></>
   );
 };
