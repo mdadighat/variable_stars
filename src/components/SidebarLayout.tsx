@@ -13,6 +13,7 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  DarkMode,
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -58,11 +59,12 @@ export default function SidebarLayout({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.900')}>
+    <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.800')}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
       />
+      
       <Drawer
         autoFocus={false}
         isOpen={isOpen}
@@ -77,7 +79,7 @@ export default function SidebarLayout({
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4"  >
+      <Box ml={{ base: 0, md: 60 }} p="4" style={{ top:0, left:0,bottom:0}} >
        {/* main content*/}
        <Store>
           <Routes>
@@ -97,7 +99,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
       transition="3s ease"
-      bg={useColorModeValue('white', 'gray.900')}
+      //bg={useColorModeValue('white', 'gray.900')}
+      bgGradient='linear(to-b, gray.900, blue.900)'
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
       w={{ base: 'full', md: 60 }}
@@ -105,14 +108,16 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       h="full"
       {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-      <Box  >{useColorModeValue(<Logo/>, <DarkLogo/>)}</Box>
+      <Box  >{<DarkLogo/>}</Box>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
+      <DarkMode>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} path={link.path}>
+        <NavItem color='white' key={link.name} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>
       ))}
+      </DarkMode>
     </Box>
   );
 };

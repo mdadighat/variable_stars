@@ -1,17 +1,20 @@
 import * as React from "react"
 import {
+  SortingState,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
+    getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Td, useToast } from '@chakra-ui/react'
+import { Skeleton, Stack, Td, useToast } from '@chakra-ui/react'
 import { useContext, useEffect, useState } from "react"
 import { Context } from "../Store"
-import { Spinner, Table, Tbody, Tfoot, Th, Thead, Tr } from "@chakra-ui/react"
+import { Table, Tbody, Tfoot, Th, Thead, Tr } from "@chakra-ui/react"
 import  {getAPI}  from "./API.tsx"
 
 type Star = {
+    altitude: string
     auid: string
     name: string
     const: string
@@ -25,33 +28,14 @@ type Star = {
     period: string
   }
 
-/*const defaultData: Star[] = [
-    {
-      auid: '000-000-000',
-      name: 'RR Lyr',
-      ra: "24h 24m 24s",
-      dec: "10' 10'' 10s",
-      type: 'star type',
-    },
-    {
-        auid: '000-000-000',
-        name: 'RR Lyr',
-        ra: "24h 24m 24s",
-        dec: "10' 10'' 10s",
-        type: 'star type',
-      },
-      {
-        auid: '000-000-000',
-        name: 'RR Lyr',
-        ra: "24h 24m 24s",
-        dec: "10' 10'' 10s",
-        type: 'star type',
-      },
-  ]*/
-
 const columnHelper = createColumnHelper<Star>()
 
 const columns = [
+  columnHelper.accessor('altitude', {
+    header: () => 'Alt.',
+      cell: info => "42.35°",
+      footer: info => info.column.id,
+    }),
     columnHelper.accessor('auid', {
     header: () => 'AUID',
       cell: info => info.getValue(),
@@ -97,6 +81,7 @@ const columns = [
 export default function StarDataTable() {
     const [loading, setLoading] = useState(false);
     const [states, dispatch] = useContext(Context);
+    const [sorting, setSorting] = React.useState<SortingState>([])
 
     const toast = useToast();
     
@@ -140,17 +125,25 @@ export default function StarDataTable() {
         const table = useReactTable({
             data,
             columns,
+            state: { sorting },
+            onSortingChange: setSorting,
             getCoreRowModel: getCoreRowModel(),
+            getSortedRowModel: getSortedRowModel(),
           })
       
 
       if (loading) {
-          return (<div><Spinner thickness='4px'
-          speed='0.5s'
-          emptyColor='gray.400'
-          size='xl' /></div>);
+          return (<div>
+            <Stack>
+              <Skeleton height='50px' />
+              <Skeleton height='50px' />
+              <Skeleton height='50px' />
+              <Skeleton height='50px' />
+              <Skeleton height='50px' />
+              <Skeleton height='50px' />
+            </Stack>
+          </div>);
       }
-      
 
       return ( 
         <div className="p-2">

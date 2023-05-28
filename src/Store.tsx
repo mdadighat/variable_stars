@@ -3,6 +3,7 @@ import Reducer from './Reducer';
 
 
 type Star = {
+    altitude: string
     auid: string
     name: string
     const: string
