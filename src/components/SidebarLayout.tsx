@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ChangeEvent, ReactNode } from 'react';
 import {
   IconButton,
   Box,
@@ -14,6 +14,11 @@ import {
   BoxProps,
   FlexProps,
   DarkMode,
+  Input,
+  InputLeftElement,
+  InputGroup,
+  useToast,
+  Select,
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -34,10 +39,13 @@ import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
-import { ReactComponent as Logo } from '../assets/logo.svg';
+
+//import { ReactComponent as Logo } from '../assets/logo.svg';
 import { ReactComponent as DarkLogo } from '../assets/logo_dk.svg';
 import Store from '../Store.tsx';
 import StarDataTable from './StarDataTable';
+import { SearchIcon } from '@chakra-ui/icons';
+
 
 interface LinkItemProps {
   name: string;
@@ -58,6 +66,7 @@ export default function SidebarLayout({
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.800')}>
       <SidebarContent
@@ -165,6 +174,37 @@ interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const toast = useToast();
+
+  function handleDateChange(event: ChangeEvent<HTMLInputElement>): void {
+    //throw new Error('Function not implemented.');
+  }
+
+  function handleTimeChange(event: ChangeEvent<HTMLInputElement>): void {
+   // throw new Error('Function not implemented.');
+  }
+  
+  
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>): void {
+    toast({
+      title: "Search change",
+      description: event.target.value,
+      status: 'success',
+      duration: 500,
+      isClosable: true,
+    })
+  }
+
+  function handleSearchSubmit(event: ChangeEvent<HTMLInputElement>): void {
+      toast({
+      title: "Search submit",
+      description: event.target.value,
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
+
   return (
     <><div style={{position:"sticky", top:0, left:0,right:0}} ><Flex
       ml={{ base: 0, md: 60 }}
@@ -191,7 +231,33 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         Variable Stars
       </Text>
 
+      
       <HStack spacing={{ base: '0', md: '4' }}>
+      <Select borderColor='blue.900' variant='filled' placeholder="What's up now?">
+        <option value="tenStarN">10 Star Tutorial - N</option>
+        <option value="tenStarS">10 Star Tutorial - S</option>
+        <option value="yso">Young Stellar Objects</option>
+      </Select>
+      <InputGroup>
+        <InputLeftElement pointerEvents='none'>
+          <SearchIcon color='gray.300' />
+        </InputLeftElement>
+        <Input
+          size="md"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          name="navBarSearch"
+          onChange={handleSearchChange}
+          onSubmit={handleSearchSubmit}
+        />
+      </InputGroup>
+      <Input
+        placeholder="Select Date and Time"
+        size="md"
+        type="datetime-local"
+        defaultValue={"2023-06-01T20:00"}
+      />
         <IconButton
           size="lg"
           variant="ghost"
@@ -202,5 +268,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </HStack>
     </Flex>
     </div></>
+
   );
 };
