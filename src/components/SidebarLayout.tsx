@@ -5,6 +5,7 @@ import {
   CloseButton,
   Flex,
   HStack,
+  VStack,
   Icon,
   useColorModeValue,
   Drawer,
@@ -19,6 +20,8 @@ import {
   InputGroup,
   useToast,
   Select,
+  Button,
+  Center,
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -28,7 +31,8 @@ import {
   FiBell,
 } from 'react-icons/fi';
 import {
-    FaListUl
+  FaGithub,
+   FaListUl
   } from 'react-icons/fa';
 import {
     Route,
@@ -126,6 +130,21 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
+      <VStack  p={2} position="absolute" bottom={0}>
+        <Center p={2}>
+          <Button
+            color="gray.400"
+            w={'full'}
+            maxW={'md'}
+            colorScheme={'whiteAlpha'}
+            leftIcon={<FaGithub />}>
+            <Center>
+              <Text>View on Github</Text>
+            </Center>
+          </Button>
+        </Center>
+        <Text fontSize="xs" color ='white'>© 2023 Tauridos. All rights reserved</Text>
+      </VStack>
       </DarkMode>
     </Box>
   );
