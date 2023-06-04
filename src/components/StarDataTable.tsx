@@ -7,7 +7,7 @@ import {
     getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Skeleton, Stack, Td, useToast } from '@chakra-ui/react'
+import { Skeleton, Stack, Td } from '@chakra-ui/react'
 import { useContext, useEffect, useState } from "react"
 import { Context } from "../Store"
 import { Table, Tbody, Tfoot, Th, Thead, Tr } from "@chakra-ui/react"
@@ -84,8 +84,6 @@ export default function StarDataTable() {
     const [states, dispatch] = useContext(Context);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [isOpen, setIsOpen] = useState(false);
-
-    const toast = useToast();
 
     const toggleOverlay = () => {
       setIsOpen(!isOpen);

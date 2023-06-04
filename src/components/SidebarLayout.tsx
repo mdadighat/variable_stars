@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode } from 'react';
+import { ChangeEvent, ReactNode, SetStateAction, useState } from 'react';
 import {
   IconButton,
   Box,
@@ -38,6 +38,7 @@ import {
     Route,
     Link as RouterLink, Routes
 } from "react-router-dom";
+//import useFieldFormatter from "format-as-you-type";
 
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
@@ -48,6 +49,7 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { ReactComponent as DarkLogo } from '../assets/logo_dk.svg';
 import Store from '../Store.tsx';
 import StarDataTable from './StarDataTable';
+import ObservationListTool from './ObservationListTool';
 import { SearchIcon } from '@chakra-ui/icons';
 
 
@@ -59,7 +61,7 @@ interface LinkItemProps {
 
 const LinkItems: Array<LinkItemProps> = [
     { name: "Home", icon: FiHome, path:"/"},
-    { name: "Lists", icon: FaListUl, path: "/lists"},
+    { name: "Observing", icon: FaListUl, path: "/observing"},
     { name: "Learn More", icon: FiStar, path:"/learn" },
     { name: "Settings", icon: FiSettings, path:"/settings" }
   ];
@@ -97,6 +99,7 @@ export default function SidebarLayout({
        <Store>
           <Routes>
             <Route path="/" element={<StarDataTable />}/>
+            <Route path="/observing" element={<ObservationListTool />}/>
           </Routes>
         </Store>
       </Box>
@@ -224,6 +227,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     })
   }
 
+  const [value, setValue] = useState('')
+  const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => setValue(event.target.value)
+
   return (
     <><div style={{position:"sticky", top:0, left:0,right:0}} ><Flex
       ml={{ base: 0, md: 60 }}
@@ -252,30 +258,37 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
       
       <HStack spacing={{ base: '0', md: '4' }}>
-      <Select borderColor='blue.900' variant='filled' placeholder="What's up now?">
+      <Select borderColor='blue.900' variant='filled' placeholder="What's up now?" size={"sm"}>
         <option value="tenStarN">10 Star Tutorial - N</option>
         <option value="tenStarS">10 Star Tutorial - S</option>
         <option value="yso">Young Stellar Objects</option>
       </Select>
       <InputGroup>
-        <InputLeftElement pointerEvents='none'>
-          <SearchIcon color='gray.300' />
+        <InputLeftElement pointerEvents='none' h="full">
+          <SearchIcon color='gray.300'  />
         </InputLeftElement>
         <Input
-          size="md"
           type="search"
           placeholder="Search"
           aria-label="Search"
           name="navBarSearch"
           onChange={handleSearchChange}
           onSubmit={handleSearchSubmit}
+          size='sm'
         />
       </InputGroup>
       <Input
+        value={value}
+        onChange={handleChange}
+        defaultValue={"32.222607, -110.974711"}
+        placeholder="Latitude, Longitude"
+        size="sm"
+      />
+      <Input
         placeholder="Select Date and Time"
-        size="md"
         type="datetime-local"
         defaultValue={"2023-06-01T20:00"}
+        size='sm'
       />
         <IconButton
           size="lg"

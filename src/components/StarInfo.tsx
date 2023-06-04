@@ -1,8 +1,6 @@
-import { Box, Center, Text, Stack, Button, List, ListIcon, ListItem, HStack } from "@chakra-ui/react";
+import { Box, Center, Text, Stack, Button, List, ListItem, HStack } from "@chakra-ui/react";
 import { Fragment } from "react";
 import { useColorModeValue } from "@chakra-ui/color-mode";
-import { CheckIcon } from "@chakra-ui/icons";
-import { FaLessThanEqual } from "react-icons/fa";
 
 export function StarInfo({ isOpen, onClose, children }) {
     if (!isOpen) {
