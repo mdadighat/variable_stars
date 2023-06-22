@@ -7,7 +7,7 @@ import {
     getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Skeleton, Stack, Td } from '@chakra-ui/react'
+import { Center, Skeleton, Stack, Td } from '@chakra-ui/react'
 import { useContext, useEffect, useState } from "react"
 import { Context } from "../Store"
 import { Table, Tbody, Tfoot, Th, Thead, Tr } from "@chakra-ui/react"
@@ -151,9 +151,11 @@ export default function StarDataTable() {
 
       return ( 
         <div className="p-2">
-                <StarInfo isOpen={isOpen} onClose={toggleOverlay} >
-         {/* children <p>Some info</p>*/}
-        </StarInfo>
+          <Center >
+            <StarInfo isOpen={isOpen} onClose={toggleOverlay}>
+              {/* children <p>Some info</p>*/}
+            </StarInfo>
+          </Center>
       <Table size='sm' maxWidth={"100%"}>
         <Thead>
           {table.getHeaderGroups().map(headerGroup => (

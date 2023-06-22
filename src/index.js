@@ -5,6 +5,7 @@ import { App } from "./App"
 import reportWebVitals from "./reportWebVitals"
 import * as serviceWorker from "./serviceWorker"
 import { BrowserRouter } from "react-router-dom"
+import ScrollToTop from "./components/ScrollToTop"
 
 
 const container = document.getElementById("root")
@@ -15,6 +16,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ColorModeScript />
+      <ScrollToTop />
       <App />
     </BrowserRouter>
   </React.StrictMode>,
