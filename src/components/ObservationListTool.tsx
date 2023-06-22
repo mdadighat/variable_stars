@@ -19,7 +19,7 @@ export default function ObservationListTool() {
       }, []);
     
     return(
-            <Box>
+            <Box zIndex={1}>
                 <Flex color='white'>
                     <Box w='300px' color={useColorModeValue('black', 'gray.100')}>
                         <VStack w={"full"} p={3}>

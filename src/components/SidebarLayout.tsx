@@ -231,7 +231,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => setValue(event.target.value)
 
   return (
-    <><div style={{position:"fixed", top:0, left:0,right:0}} ><Flex
+    <><div style={{position:"fixed", top:0, left:0,right:0, zIndex:2}} ><Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
