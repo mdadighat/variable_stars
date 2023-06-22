@@ -94,9 +94,9 @@ export default function SidebarLayout({
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4" style={{ top:0, left:0,bottom:0}} >
+      <Box ml={{ base: 0, md: 60 }} paddingTop="20" style={{ top:0, left:0,bottom:0}} >
        {/* main content*/}
-       <Store>
+        <Store>
           <Routes>
             <Route path="/" element={<StarDataTable />}/>
             <Route path="/observing" element={<ObservationListTool />}/>
@@ -231,7 +231,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => setValue(event.target.value)
 
   return (
-    <><div style={{position:"sticky", top:0, left:0,right:0}} ><Flex
+    <><div style={{position:"fixed", top:0, left:0,right:0}} ><Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
@@ -240,6 +240,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
+      zIndex={40}
       {...rest}>
       <IconButton
         display={{ base: 'flex', md: 'none' }}

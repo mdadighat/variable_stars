@@ -7,8 +7,8 @@ method: string
 
 //config for get request note that the method as changed to get this is very important
 const getConfig : Params = {
-    baseUrl: "http://localhost:5000/stars",
-    method: 'get', 
+    baseUrl: "http://localhost:8000/stars",
+    method: 'GET', 
 }
 
 export const getAPI = async (url: string, data: any): Promise<any> =>{
@@ -16,7 +16,7 @@ export const getAPI = async (url: string, data: any): Promise<any> =>{
         ...getConfig,
         url: `${getConfig.baseUrl}`,
         headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:5000/stars',
+            'Content-Type': 'application/json',
         },
     }).then ( (response) => {
         console.log(response)

@@ -10,10 +10,12 @@ export function StarInfo({ isOpen, onClose, children }) {
   return (
     <Fragment>
         <div style={{
-            position: "absolute",
+            position: "fixed",
             top: "0",
             left: "45%",
-            transform: "translateY(10%)"
+            transform: "translateY(5%)",
+            maxHeight: "100vh",
+            overflowY: "auto",
         }}>
         <Center py={6}>
             <Box 
