@@ -7,11 +7,12 @@ import {
     getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Skeleton, Stack, Td, useToast } from '@chakra-ui/react'
+import { Center, Skeleton, Stack, Td } from '@chakra-ui/react'
 import { useContext, useEffect, useState } from "react"
 import { Context } from "../Store"
 import { Table, Tbody, Tfoot, Th, Thead, Tr } from "@chakra-ui/react"
 import  {getAPI}  from "./API.tsx"
+import StarInfo from "./StarInfo.tsx"
 
 type Star = {
     altitude: string
@@ -82,8 +83,11 @@ export default function StarDataTable() {
     const [loading, setLoading] = useState(false);
     const [states, dispatch] = useContext(Context);
     const [sorting, setSorting] = React.useState<SortingState>([])
+    const [isOpen, setIsOpen] = useState(false);
 
-    const toast = useToast();
+    const toggleOverlay = () => {
+      setIsOpen(!isOpen);
+    };
     
     //const rerender = React.useReducer(() => ({}), {})[1]
 
@@ -147,6 +151,11 @@ export default function StarDataTable() {
 
       return ( 
         <div className="p-2">
+          <Center >
+            <StarInfo isOpen={isOpen} onClose={toggleOverlay}>
+              {/* children <p>Some info</p>*/}
+            </StarInfo>
+          </Center>
       <Table size='sm' maxWidth={"100%"}>
         <Thead>
           {table.getHeaderGroups().map(headerGroup => (
@@ -168,13 +177,8 @@ export default function StarDataTable() {
           {table.getRowModel().rows.map(row => (
             <Tr key={row.id} >
               {row.getVisibleCells().map(cell => (
-                <Td key={cell.id} onClick={() => toast({
-                  title: cell.row.getAllCells()[1].getValue() as string,
-                  description: "Star was clicked.",
-                  status: 'success',
-                  duration: 5000,
-                  isClosable: true,
-                })}>
+                <Td key={cell.id} onClick={toggleOverlay}>
+                  
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Td>
               ))}
@@ -198,7 +202,7 @@ export default function StarDataTable() {
           ))}
         </Tfoot>
       </Table>
-    
+
     </div>
         );
       //if (states.error || !states.stars) {

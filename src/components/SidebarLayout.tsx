@@ -1,10 +1,11 @@
-import { ReactNode } from 'react';
+import { ChangeEvent, ReactNode, SetStateAction, useState } from 'react';
 import {
   IconButton,
   Box,
   CloseButton,
   Flex,
   HStack,
+  VStack,
   Icon,
   useColorModeValue,
   Drawer,
@@ -14,6 +15,13 @@ import {
   BoxProps,
   FlexProps,
   DarkMode,
+  Input,
+  InputLeftElement,
+  InputGroup,
+  useToast,
+  Select,
+  Button,
+  Center,
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -23,21 +31,27 @@ import {
   FiBell,
 } from 'react-icons/fi';
 import {
-    FaListUl
+  FaGithub,
+   FaListUl
   } from 'react-icons/fa';
 import {
     Route,
     Link as RouterLink, Routes
 } from "react-router-dom";
+//import useFieldFormatter from "format-as-you-type";
 
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
-import { ReactComponent as Logo } from '../assets/logo.svg';
+
+//import { ReactComponent as Logo } from '../assets/logo.svg';
 import { ReactComponent as DarkLogo } from '../assets/logo_dk.svg';
 import Store from '../Store.tsx';
 import StarDataTable from './StarDataTable';
+import ObservationListTool from './ObservationListTool';
+import { SearchIcon } from '@chakra-ui/icons';
+
 
 interface LinkItemProps {
   name: string;
@@ -47,7 +61,7 @@ interface LinkItemProps {
 
 const LinkItems: Array<LinkItemProps> = [
     { name: "Home", icon: FiHome, path:"/"},
-    { name: "Lists", icon: FaListUl, path: "/lists"},
+    { name: "Observing", icon: FaListUl, path: "/observing"},
     { name: "Learn More", icon: FiStar, path:"/learn" },
     { name: "Settings", icon: FiSettings, path:"/settings" }
   ];
@@ -58,6 +72,7 @@ export default function SidebarLayout({
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.800')}>
       <SidebarContent
@@ -79,11 +94,12 @@ export default function SidebarLayout({
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4" style={{ top:0, left:0,bottom:0}} >
+      <Box ml={{ base: 0, md: 60 }} paddingTop="20" style={{ top:0, left:0,bottom:0}} >
        {/* main content*/}
-       <Store>
+        <Store>
           <Routes>
             <Route path="/" element={<StarDataTable />}/>
+            <Route path="/observing" element={<ObservationListTool />}/>
           </Routes>
         </Store>
       </Box>
@@ -117,6 +133,21 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
+      <VStack  p={2} position="absolute" bottom={0}>
+        <Center p={2}>
+          <Button
+            color="gray.400"
+            w={'full'}
+            maxW={'md'}
+            colorScheme={'whiteAlpha'}
+            leftIcon={<FaGithub />}>
+            <Center>
+              <Text>View on Github</Text>
+            </Center>
+          </Button>
+        </Center>
+        <Text fontSize="xs" color ='white'>© 2023 Tauridos. All rights reserved</Text>
+      </VStack>
       </DarkMode>
     </Box>
   );
@@ -165,8 +196,42 @@ interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const toast = useToast();
+
+  function handleDateChange(event: ChangeEvent<HTMLInputElement>): void {
+    //throw new Error('Function not implemented.');
+  }
+
+  function handleTimeChange(event: ChangeEvent<HTMLInputElement>): void {
+   // throw new Error('Function not implemented.');
+  }
+  
+  
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>): void {
+    toast({
+      title: "Search change",
+      description: event.target.value,
+      status: 'success',
+      duration: 500,
+      isClosable: true,
+    })
+  }
+
+  function handleSearchSubmit(event: ChangeEvent<HTMLInputElement>): void {
+      toast({
+      title: "Search submit",
+      description: event.target.value,
+      status: 'success',
+      duration: 2000,
+      isClosable: true,
+    })
+  }
+
+  const [value, setValue] = useState('')
+  const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => setValue(event.target.value)
+
   return (
-    <><div style={{position:"sticky", top:0, left:0,right:0}} ><Flex
+    <><div style={{position:"fixed", top:0, left:0,right:0, zIndex:2}} ><Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
@@ -175,6 +240,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
+      zIndex={40}
       {...rest}>
       <IconButton
         display={{ base: 'flex', md: 'none' }}
@@ -191,7 +257,40 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         Variable Stars
       </Text>
 
+      
       <HStack spacing={{ base: '0', md: '4' }}>
+      <Select borderColor='blue.900' variant='filled' placeholder="What's up now?" size={"sm"}>
+        <option value="tenStarN">10 Star Tutorial - N</option>
+        <option value="tenStarS">10 Star Tutorial - S</option>
+        <option value="yso">Young Stellar Objects</option>
+      </Select>
+      <InputGroup>
+        <InputLeftElement pointerEvents='none' h="full">
+          <SearchIcon color='gray.300'  />
+        </InputLeftElement>
+        <Input
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          name="navBarSearch"
+          onChange={handleSearchChange}
+          onSubmit={handleSearchSubmit}
+          size='sm'
+        />
+      </InputGroup>
+      <Input
+        value={value}
+        onChange={handleChange}
+        defaultValue={"32.222607, -110.974711"}
+        placeholder="Latitude, Longitude"
+        size="sm"
+      />
+      <Input
+        placeholder="Select Date and Time"
+        type="datetime-local"
+        defaultValue={"2023-06-01T20:00"}
+        size='sm'
+      />
         <IconButton
           size="lg"
           variant="ghost"
@@ -202,5 +301,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </HStack>
     </Flex>
     </div></>
+
   );
 };
