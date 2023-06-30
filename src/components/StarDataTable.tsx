@@ -35,7 +35,7 @@ const columns = [
   columnHelper.accessor('altitude', {
     header: () => 'Alt.',
       cell: info => "42.35°",
-      footer: info => info.column.id,
+      footer: 'Alt.',
     }),
     columnHelper.accessor('auid', {
     header: () => 'AUID',
@@ -50,7 +50,7 @@ const columns = [
     columnHelper.accessor('const', {
       header: () => 'Const.',
       cell: info => info.renderValue(),
-      footer: info => info.column.id,
+      footer: 'Const.',
     }),
     columnHelper.accessor('ra', {
       header: () => <span>RA</span>,
@@ -62,7 +62,7 @@ const columns = [
     }),
     columnHelper.accessor('varType', {
       header: 'Var. Type',
-      footer: info => info.column.id,
+      footer: 'Var. Type',
     }),
     columnHelper.accessor(row => `${row.maxMag} ${row.maxPass}`, {
       header: 'Max',
@@ -152,7 +152,7 @@ export default function StarDataTable() {
       return ( 
         <div className="p-2">
           <Center >
-            <StarInfo isOpen={isOpen} onClose={toggleOverlay}>
+            <StarInfo isOpen={isOpen} onClose={toggleOverlay} data-testid="overlay">
               {/* children <p>Some info</p>*/}
             </StarInfo>
           </Center>

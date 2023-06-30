@@ -10,7 +10,6 @@
     "@tanstack/react-table": "^8.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.4.3",
     "@types/axios": "^0.14.0",
     "@types/jest": "^28.1.8",
     "@types/node": "^12.20.55",
@@ -20,6 +19,7 @@
     "axios": "^1.4.0",
     "format-as-you-type": "^1.0.8",
     "framer-motion": "^6.5.1",
+    "jest": "^27.5.1",
     "openssl": "^2.0.0",
     "react": "^18.2.0",
     "react-aria": "^3.25.0",
@@ -34,7 +34,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage --transformIgnorePatterns 'node_modules/(?!axios)/'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -51,5 +51,19 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "lines": 80
+      }
+    },
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    }
+  },
+  "devDependencies": {
+    "@testing-library/user-event": "^14.4.3",
+    "jest-cli": "^29.5.0"
   }
 }

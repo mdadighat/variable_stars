@@ -7,7 +7,6 @@ import SidebarLayout from "./components/SidebarLayout"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
-   
-        <SidebarLayout children={undefined} />
+    <SidebarLayout children={undefined} />
   </ChakraProvider>
 )
