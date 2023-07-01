@@ -51,6 +51,8 @@ import Store from '../Store.tsx';
 import StarDataTable from './StarDataTable';
 import ObservationListTool from './ObservationListTool';
 import { SearchIcon } from '@chakra-ui/icons';
+import BuyMeACoffeeButton from './BuyMeACoffeeButton.tsx';
+import VisualizationTool from './VisualizationTool.tsx';
 
 
 interface LinkItemProps {
@@ -62,6 +64,7 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
     { name: "Home", icon: FiHome, path:"/"},
     { name: "Observing", icon: FaListUl, path: "/observing"},
+    { name: "Visualizations", icon: FaListUl, path: "/visualizations"},
     { name: "Learn More", icon: FiStar, path:"/learn" },
     { name: "Settings", icon: FiSettings, path:"/settings" }
   ];
@@ -97,9 +100,11 @@ export default function SidebarLayout({
       <Box ml={{ base: 0, md: 60 }} paddingTop="20" style={{ top:0, left:0,bottom:0}} >
        {/* main content*/}
         <Store>
+          
           <Routes>
             <Route path="/" element={<StarDataTable />}/>
             <Route path="/observing" element={<ObservationListTool />}/>
+            <Route path="/visualizations" element={<VisualizationTool />}/>
           </Routes>
         </Store>
       </Box>
@@ -146,6 +151,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             </Center>
           </Button>
         </Center>
+        <BuyMeACoffeeButton />
         <Text fontSize="xs" color ='white'>© 2023 Tauridos. All rights reserved</Text>
       </VStack>
       </DarkMode>
@@ -212,8 +218,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       title: "Search change",
       description: event.target.value,
       status: 'success',
-      duration: 500,
-      isClosable: true,
+      duration: 4000,
+      isClosable: true
     })
   }
 
@@ -273,6 +279,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           placeholder="Search"
           aria-label="Search"
           name="navBarSearch"
+          data-testid="navBarSearch"
           onChange={handleSearchChange}
           onSubmit={handleSearchSubmit}
           size='sm'

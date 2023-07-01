@@ -21,7 +21,7 @@ export default function ObservationListTool() {
     return(
             <Box zIndex={1}>
                 <Flex color='white'>
-                    <Box w='300px' color={useColorModeValue('black', 'gray.100')}>
+                    <Box w='300px' color={useColorModeValue('black', 'gray.100')} data-testid="targetList">
                         <VStack w={"full"} p={3}>
                             <Heading as='h2' size='md'marginTop={"3"} textAlign={"center"} marginBottom={"4"}>Observing program stars</Heading>
                             <List border={"1px"} overflowY={"auto"} width={"100%"} p={4}  >
@@ -60,7 +60,7 @@ export default function ObservationListTool() {
                             </List>
                         </VStack>
                     </Box>
-                    <Box flex='1'>
+                    <Box flex='1' data-testid="targetPlan">
                         <Tabs isFitted variant='enclosed' bg={useColorModeValue('gray.300', 'gray.700')}  
                             color={useColorModeValue('black', 'gray.100')} boxShadow='inner' w={"full"}>
                             <TabList >
