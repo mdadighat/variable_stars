@@ -4,13 +4,14 @@ import {
     createColumnHelper,
     flexRender,
     getCoreRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Center, Skeleton, Stack, Td } from '@chakra-ui/react'
+import { Button, Center, Flex, HStack, Input, Select, Skeleton, Stack, Td } from '@chakra-ui/react'
 import { useContext, useEffect, useState } from "react"
 import { Context } from "../Store"
-import { Table, Tbody, Tfoot, Th, Thead, Tr } from "@chakra-ui/react"
+import { Table, Tbody, Tfoot, Th, Thead, Tr, Text } from "@chakra-ui/react"
 import  {getAPI}  from "./API.tsx"
 import StarInfo from "./StarInfo.tsx"
 
@@ -133,6 +134,7 @@ export default function StarDataTable() {
             onSortingChange: setSorting,
             getCoreRowModel: getCoreRowModel(),
             getSortedRowModel: getSortedRowModel(),
+            getPaginationRowModel: getPaginationRowModel(),
           })
       
 
@@ -202,7 +204,81 @@ export default function StarDataTable() {
           ))}
         </Tfoot>
       </Table>
+      <Center>
+        <HStack paddingTop={4} paddingBottom={4}>    
+          <Button
+            border={'1px'}
+            borderRadius='10px'
+            background={"blue.800"}
+            color={"white"}
+            _hover={{ bg: 'gray.600' }}
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<<'}
+          </Button>
+          <Button
+            border={'1px'}
+            borderRadius='10px'
+            background={"blue.800"}
+            color={"white"}
+            _hover={{ bg: 'gray.600' }}
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<'}
+          </Button>
+          <Button
+            border={'1px'}
 
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>'}
+          </Button>
+          <Button
+            border={'1px'}
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>>'}
+          </Button>
+        
+          <Text>Page</Text>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </strong>
+
+          | Go to page:
+          
+          <Input
+            width={20}
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={e => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0
+              table.setPageIndex(page)
+            }}
+            className="border p-1 rounded w-16"
+          />
+ 
+        
+          <Select
+            width={40}
+            value={table.getState().pagination.pageSize}
+            onChange={e => {
+              table.setPageSize(Number(e.target.value))
+            }}
+          >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+      </Center>
     </div>
         );
       //if (states.error || !states.stars) {
