@@ -38,11 +38,6 @@ const columns = [
       cell: info => "42.35°",
       footer: 'Alt.',
     }),
-    columnHelper.accessor('auid', {
-    header: () => 'AUID',
-      cell: info => info.getValue(),
-      footer: info => info.column.id,
-    }),
     columnHelper.accessor('name', {
       header: () => 'Name',
       cell: info => info.renderValue(),
@@ -93,7 +88,7 @@ export default function StarDataTable() {
     //const rerender = React.useReducer(() => ({}), {})[1]
 
     //function below triggers the helper function
-    const getData = () => getAPI("","").then(
+    const getData = () => getAPI(1,50).then(
       (res) => {
         if(res.status === 200){
           const response =res.data
