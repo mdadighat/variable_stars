@@ -20,6 +20,8 @@ type Star = {
 type InitialStateType = {
     stars: Array<Star>;
     starCount: any;
+    latLong: string;
+    dateTime: string;
     error: null | string;
 }
 
@@ -30,6 +32,8 @@ type StoreProps = {
 const initialState: InitialStateType = {
     stars: [],
     starCount: 0,
+    latLong: "",
+    dateTime: "",
     error: null
 };
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, SetStateAction, useState } from 'react';
+import { ChangeEvent, ReactNode, SetStateAction, useContext, useState } from 'react';
 import {
   IconButton,
   Box,
@@ -47,7 +47,7 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 //import { ReactComponent as Logo } from '../assets/logo.svg';
 import { ReactComponent as DarkLogo } from '../assets/logo_dk.svg';
-import Store from '../Store.tsx';
+import Store, { Context } from '../Store.tsx';
 import StarDataTable from './StarDataTable';
 import ObservationListTool from './ObservationListTool';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -69,12 +69,15 @@ const LinkItems: Array<LinkItemProps> = [
     { name: "Settings", icon: FiSettings, path:"/settings" }
   ];
 
+
+
 export default function SidebarLayout({
   children,
 }: {
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
 
   return (
     <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.800')}>
@@ -204,13 +207,20 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const toast = useToast();
+  const [states, dispatch] = useContext(Context);
 
-  function handleDateChange(event: ChangeEvent<HTMLInputElement>): void {
-    //throw new Error('Function not implemented.');
-  }
-
-  function handleTimeChange(event: ChangeEvent<HTMLInputElement>): void {
-   // throw new Error('Function not implemented.');
+  //handle keydown event and check for enter key on datetime input
+  function handleDateTimeChange(event: React.KeyboardEvent<HTMLInputElement>): void {
+    if (event.key === 'Enter') {
+      dispatch({type: 'SET_DATETIME', payload: event.currentTarget.value})
+      toast({
+        title: "Datetime change",
+        description: event.currentTarget.value,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+    }
   }
   
   
@@ -234,8 +244,19 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     })
   }
 
-  const [value, setValue] = useState('')
-  const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => setValue(event.target.value)
+  
+  function handleLatLongChange(event: React.KeyboardEvent<HTMLInputElement>): void {
+    if (event.key === 'Enter') {
+      dispatch({type: 'SET_LATLONG', payload: event.currentTarget.value})
+      toast({
+        title: "LatLong change",
+        description: event.currentTarget.value,
+        status: 'success',
+        duration: 4000,
+        isClosable: true
+      })
+    }
+  }
 
   return (
     <><div style={{position:"fixed", top:0, left:0,right:0, zIndex:2}} ><Flex
@@ -287,8 +308,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         />
       </InputGroup>
       <Input
-        value={value}
-        onChange={handleChange}
+        //value={value}
+        onKeyDown={handleLatLongChange}
         defaultValue={"32.222607, -110.974711"}
         placeholder="Latitude, Longitude"
         size="sm"
@@ -296,6 +317,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       <Input
         placeholder="Select Date and Time"
         type="datetime-local"
+        onKeyDown={handleDateTimeChange}
         defaultValue={"2023-06-01T20:00"}
         size='sm'
       />

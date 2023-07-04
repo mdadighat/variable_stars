@@ -4,14 +4,22 @@ const Reducer = (state, action) => {
             return {
                 ...state,
                 stars: action.payload,
-                starCount: state.starCount
             };
         case 'SET_STAR_COUNT':
             return {
                 ...state,
-                stars: state.stars,
                 starCount: action.payload
-            };    
+            };   
+        case 'SET_DATETIME':
+            return {
+                ...state,              
+                dateTime: action.payload
+            };  
+        case 'SET_LATLONG':
+            return {
+                ...state,            
+                latLong: action.payload
+            };        
         case 'SET_ERROR':
             return {
                 ...state,

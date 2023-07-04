@@ -14,6 +14,7 @@ import { Context } from "../Store"
 import { Table, Tbody, Tfoot, Th, Thead, Tr, Text } from "@chakra-ui/react"
 import  {getStarCount, getStars}  from "./API.tsx"
 import StarInfo from "./StarInfo.tsx"
+import { CheckCircleIcon} from "@chakra-ui/icons"
 
 type Star = {
     altitude: string
@@ -33,6 +34,18 @@ type Star = {
 const columnHelper = createColumnHelper<Star>()
 
 const columns = [
+  columnHelper.accessor('auid', {
+    header: () => 'AUID',
+      cell: props => {
+        return props.renderValue() == null || props.renderValue()=="" ? (
+          <CheckCircleIcon color={"gray.400"} />
+        ) : (
+          <CheckCircleIcon color={"green.500"}/>
+        );
+      }
+      ,
+      footer: 'AUID',
+    }),
   columnHelper.accessor('altitude', {
     header: () => 'Alt.',
       cell: info => info.renderValue() + '°',
@@ -310,8 +323,6 @@ export default function StarDataTable() {
               </option>
             ))}
           </Select>
-
-         <Text>Stars: {starCount}</Text>
             
         </HStack>
       </Center>

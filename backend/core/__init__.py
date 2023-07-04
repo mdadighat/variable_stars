@@ -7,7 +7,7 @@ from flask import jsonify
 import json
 import jsonpickle
 from flask_cors import CORS
-from core.tools.location import getAltitude
+from core.tools.location import get_altitude
 import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
 
@@ -51,7 +51,7 @@ def get_stars():
     page= request.args.get("page", 1, type=int)
     per_page = request.args.get("per-page", 100, type=int)
     stars = models.Vsxdata.query.paginate(page=page, per_page=per_page, error_out=False)
-    stars = getAltitude(stars) 
+    stars = get_altitude(stars) 
     response_body = []
 
     starJson = jsonpickle.encode(stars.items)
