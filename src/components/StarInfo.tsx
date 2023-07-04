@@ -17,17 +17,17 @@ export function StarInfo({ isOpen, onClose, children }) {
             overflowY: "auto",
             zIndex:3
         }}>
-             <IconButton 
-                  name="md-close"
-                  icon={<CloseIcon/>}
-                  size={"sm"}
-                  backgroundColor={"transparent"}
-                  onClick={onClose}
-                  style={{
-                      position: 'absolute',
-                      right: '15px',
-                      top: '35px',
-                  }} aria-label={"close"}/>
+            <IconButton 
+                name="md-close"
+                icon={<CloseIcon/>}
+                size={"sm"}
+                backgroundColor={"transparent"}
+                onClick={onClose}
+                style={{
+                    position: 'absolute',
+                    right: '15px',
+                    top: '35px',
+                }} aria-label={"close"}/>
         <Center py={6}>
             <Box 
             

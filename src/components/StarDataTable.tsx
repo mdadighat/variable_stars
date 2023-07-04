@@ -50,40 +50,49 @@ const columns = [
     header: () => 'Alt.',
       cell: info => info.renderValue() + '°',
       footer: 'Alt.',
+      enableMultiSort: true
     }),
     columnHelper.accessor('name', {
       header: () => 'Name',
       cell: info => info.renderValue(),
       footer: info => info.column.id,
+      enableMultiSort: true
     }),
     columnHelper.accessor('const', {
       header: () => 'Const.',
       cell: info => info.renderValue(),
       footer: 'Const.',
+      enableMultiSort: true,
     }),
     columnHelper.accessor('ra', {
       header: () => <span>RA</span>,
       footer: info => info.column.id,
+      enableMultiSort: true,
     }),
     columnHelper.accessor('dec', {
       header: 'Dec',
       footer: info => info.column.id,
+      enableMultiSort: true,
     }),
     columnHelper.accessor('varType', {
       header: 'Var. Type',
       footer: 'Var. Type',
+      enableMultiSort: true,
     }),
     columnHelper.accessor(row => `${row.maxMag} ${row.maxPass}`, {
       header: 'Max',
       footer: info => info.column.id,
+      enableMultiSort: true,
     }),
     columnHelper.accessor(row => `${row.minMag} ${row.minPass}`, {
       header: 'Min',
       footer: info => info.column.id,
+      enableMultiSort: true,
     }),
     columnHelper.accessor('period', {
       header: 'Period',
       footer: info => info.column.id,
+      enableMultiSort: true,
     }),
 
   ]
@@ -163,6 +172,7 @@ export default function StarDataTable() {
       const table = useReactTable({
         data,
         columns,
+        enableMultiSort: true,
         state: { sorting },
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -170,7 +180,7 @@ export default function StarDataTable() {
         getPaginationRowModel: getPaginationRowModel(),
        // pageCount: Math.ceil(data.length / 10) 
           })
-      
+    
       const starCount = states.starCount;
 
       if (loading) {
@@ -199,12 +209,25 @@ export default function StarDataTable() {
             <Tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <Th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
+                  {header.isPlaceholder ? null : (
+                    <div
+                    {...{
+                      className: header.column.getCanSort()
+                        ? 'cursor-pointer select-none'
+                        : '',
+                      onClick: header.column.getToggleSortingHandler(),
+                    }}
+                  >
+                    {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
-                      )}
+                    )}
+                    {{
+                        asc: <span>▲</span>,
+                        desc: <span>▼</span>,
+                     }[header.column.getIsSorted() as string] ?? null}
+                    </div>
+                  )}
                 </Th>
               ))}
             </Tr>
