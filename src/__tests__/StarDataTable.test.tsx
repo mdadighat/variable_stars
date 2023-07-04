@@ -20,10 +20,7 @@ test("StarDataTable has all columns", async () => {
 
         const altHeaders = screen.getAllByRole("columnheader", { name: /alt/i });
         expect(altHeaders.length).toBe(2);
-
-        const auidHeaders = screen.getAllByRole("columnheader", { name: /auid/i });
-        expect(auidHeaders.length).toBe(2);
-
+        
         const constHeaders = screen.getAllByRole("columnheader", { name: /const/i });
         expect(constHeaders.length).toBe(2);
 

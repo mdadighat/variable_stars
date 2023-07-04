@@ -14,6 +14,7 @@ class Vsxdata(db.Model):
     minMag = db.Column(db.String(140), default="n/a")
     minPass = db.Column(db.String(140), default="n/a")
     period = db.Column(db.String(140), default="n/a")
+    altitude = 0
     #category= db.Column(db.String, db.ForeignKey('category.id'))
 
     def __repr__(self):

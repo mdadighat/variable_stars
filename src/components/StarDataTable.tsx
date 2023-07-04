@@ -8,11 +8,11 @@ import {
     getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Button, Center, Flex, HStack, Input, Select, Skeleton, Stack, Td } from '@chakra-ui/react'
+import { Box, Button, Center, Flex, HStack, Input, Select, Skeleton, Stack, Td } from '@chakra-ui/react'
 import { useContext, useEffect, useState } from "react"
 import { Context } from "../Store"
 import { Table, Tbody, Tfoot, Th, Thead, Tr, Text } from "@chakra-ui/react"
-import  {getAPI}  from "./API.tsx"
+import  {getStarCount, getStars}  from "./API.tsx"
 import StarInfo from "./StarInfo.tsx"
 
 type Star = {
@@ -35,7 +35,7 @@ const columnHelper = createColumnHelper<Star>()
 const columns = [
   columnHelper.accessor('altitude', {
     header: () => 'Alt.',
-      cell: info => "42.35°",
+      cell: info => info.renderValue() + '°',
       footer: 'Alt.',
     }),
     columnHelper.accessor('name', {
@@ -88,7 +88,7 @@ export default function StarDataTable() {
     //const rerender = React.useReducer(() => ({}), {})[1]
 
     //function below triggers the helper function
-    const getData = () => getAPI(1,50).then(
+    const getData = () => getStars(1,50).then(
       (res) => {
         if(res.status === 200){
           const response =res.data
@@ -113,25 +113,52 @@ export default function StarDataTable() {
     setLoading(false);
   })
 
+  const getStarTotal = () => getStarCount().then(
+    (res) => {
+      if(res.status === 200){
+        const response = res.data;
+        console.log(response);
+        //setStarsData( res[0] )
+        dispatch({type: 'SET_STAR_COUNT', payload: response});
+
+        //setData(res.data)
+        console.log(data); 
+      } else {
+        console.log(res);
+      }
+    }
+  ).catch((error) => {
+    if (error.response) {
+      dispatch({type: 'SET_ERROR', payload: error});
+      console.log(error.response)
+      console.log(error.response.status)
+      console.log(error.response.headers)
+      }
+})
+
         //this runs the getData trigger function as useEffect
     useEffect(()=>{
       setLoading(true);
-        getData()
+      getStarTotal();
+      getData();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-        const data:Star[] = states.stars;//{ nodes: states.stars };
-       // const [data, setData] = React.useState(() => [...defaultData])
-        const table = useReactTable({
-            data,
-            columns,
-            state: { sorting },
-            onSortingChange: setSorting,
-            getCoreRowModel: getCoreRowModel(),
-            getSortedRowModel: getSortedRowModel(),
-            getPaginationRowModel: getPaginationRowModel(),
+    const data:Star[] = states.stars;//{ nodes: states.stars };
+      // const [data, setData] = React.useState(() => [...defaultData])
+      const table = useReactTable({
+        data,
+        columns,
+        state: { sorting },
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+       // pageCount: Math.ceil(data.length / 10) 
           })
       
+      const starCount = states.starCount;
 
       if (loading) {
           return (<div>
@@ -199,9 +226,11 @@ export default function StarDataTable() {
           ))}
         </Tfoot>
       </Table>
-      <Center>
+      
+      <Center overflowX={"scroll"}>
         <HStack paddingTop={4} paddingBottom={4}>    
           <Button
+            zIndex={0}
             border={'1px'}
             borderRadius='10px'
             background={"blue.800"}
@@ -213,6 +242,7 @@ export default function StarDataTable() {
             {'<<'}
           </Button>
           <Button
+            zIndex={0}
             border={'1px'}
             borderRadius='10px'
             background={"blue.800"}
@@ -223,9 +253,19 @@ export default function StarDataTable() {
           >
             {'<'}
           </Button>
+
+          <Text>Page</Text>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </strong>
+
           <Button
             border={'1px'}
-
+            borderRadius='10px'
+            background={"blue.800"}
+            color={"white"}
+            _hover={{ bg: 'gray.600' }}
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -233,19 +273,17 @@ export default function StarDataTable() {
           </Button>
           <Button
             border={'1px'}
+            borderRadius='10px'
+            background={"blue.800"}
+            color={"white"}
+            _hover={{ bg: 'gray.600' }}
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
             {'>>'}
           </Button>
-        
-          <Text>Page</Text>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </strong>
 
-          | Go to page:
+          <Text>Go to page:</Text>
           
           <Input
             width={20}
@@ -266,18 +304,20 @@ export default function StarDataTable() {
               table.setPageSize(Number(e.target.value))
             }}
           >
-            {[10, 20, 30, 40, 50].map(pageSize => (
+            {[10, 25, 50, 100, 200].map(pageSize => (
               <option key={pageSize} value={pageSize}>
                 Show {pageSize}
               </option>
             ))}
           </Select>
+
+         <Text>Stars: {starCount}</Text>
+            
         </HStack>
       </Center>
+      
     </div>
         );
-      //if (states.error || !states.stars) {
-      //  return <p>Something went wrong: <span>{states.error}</span></p>;
     }
 
 

@@ -3,21 +3,24 @@ const Reducer = (state, action) => {
         case 'SET_STARS':
             return {
                 ...state,
-                stars: action.payload
+                stars: action.payload,
+                starCount: state.starCount
             };
+        case 'SET_STAR_COUNT':
+            return {
+                ...state,
+                stars: state.stars,
+                starCount: action.payload
+            };    
         case 'SET_ERROR':
             return {
                 ...state,
                 error: action.payload
             };
-       //case 'ADD_POST':
-       //     return {
-        //        ...state,
-        //        posts: state.posts.concat(action.payload)
-        //    };
         default:
             return state;
     }
 };
+
 
 export default Reducer;

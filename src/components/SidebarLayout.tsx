@@ -119,6 +119,7 @@ interface SidebarProps extends BoxProps {
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Box
+      zIndex={4}
       transition="3s ease"
       //bg={useColorModeValue('white', 'gray.900')}
       bgGradient='linear(to-b, gray.900, blue.900)'

@@ -7,14 +7,14 @@ interface Params {
 
 //config for get request note that the method as changed to get this is very important
 const getConfig : Params = {
-    baseUrl: "http://localhost:8000/stars",
+    baseUrl: "http://localhost:8000/",
     method: 'GET',
 }
 
-export const getAPI = async (page: number, perPage: number): Promise<any> =>{
+export const getStars = async (page: number, perPage: number): Promise<any> =>{
     return await axios({
         ...getConfig,
-        url: `${getConfig.baseUrl}`+ `?page=${page}&per-page=${perPage}`,
+        url: `${getConfig.baseUrl}` + `stars` + `?page=${page}&per-page=${perPage}`,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -33,3 +33,27 @@ export const getAPI = async (page: number, perPage: number): Promise<any> =>{
     })
 }
 
+
+
+//funciton to get the count of stars
+export const getStarCount = async (): Promise<any> =>{
+    return await axios({
+        ...getConfig,
+        url: `${getConfig.baseUrl}` + `starCount`,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then ( (response) => {
+        console.log(response)
+        return {
+            status: response.status,
+            data: response.data
+        }
+    }).catch((error) =>{
+        console.log(error)
+        return {
+            status: error.status,
+            data: error.response
+        }
+    })
+}

@@ -19,6 +19,7 @@ type Star = {
 
 type InitialStateType = {
     stars: Array<Star>;
+    starCount: any;
     error: null | string;
 }
 
@@ -28,6 +29,7 @@ type StoreProps = {
 
 const initialState: InitialStateType = {
     stars: [],
+    starCount: 0,
     error: null
 };
 
