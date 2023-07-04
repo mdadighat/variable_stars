@@ -1,6 +1,7 @@
-import { Box, Center, Text, Stack, Button, List, ListItem, HStack, Flex } from "@chakra-ui/react";
+import { Box, Center, Text, Stack, Button, List, ListItem, HStack, Flex, Icon, IconButton } from "@chakra-ui/react";
 import { Fragment } from "react";
 import { useColorModeValue } from "@chakra-ui/color-mode";
+import { CloseIcon } from "@chakra-ui/icons";
 
 export function StarInfo({ isOpen, onClose, children }) {
     if (!isOpen) {
@@ -16,8 +17,20 @@ export function StarInfo({ isOpen, onClose, children }) {
             overflowY: "auto",
             zIndex:3
         }}>
+             <IconButton 
+                  name="md-close"
+                  icon={<CloseIcon/>}
+                  size={"sm"}
+                  backgroundColor={"transparent"}
+                  onClick={onClose}
+                  style={{
+                      position: 'absolute',
+                      right: '15px',
+                      top: '35px',
+                  }} aria-label={"close"}/>
         <Center py={6}>
             <Box 
+            
                 w={'full'}
                 h={"fit-content"}
                 // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -27,13 +40,13 @@ export function StarInfo({ isOpen, onClose, children }) {
                 rounded={'md'}
                 overflow={'hidden'}
                 > 
-                
                 <Stack
                     textAlign={'center'}
                     p={5}
                     // eslint-disable-next-line react-hooks/rules-of-hooks
                     color={useColorModeValue('gray.800', 'white')}
                     align={'center'}>
+            
                     <Text
                         fontSize={'sm'}
                         fontWeight={500}
