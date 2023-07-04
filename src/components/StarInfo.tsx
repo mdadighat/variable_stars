@@ -3,11 +3,11 @@ import { Fragment } from "react";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { CloseIcon } from "@chakra-ui/icons";
 
-export function StarInfo({ isOpen, onClose, children }) {
+export function StarInfo({ isOpen, onClose, starData }) {
     if (!isOpen) {
         return null;
     }
-    
+
   return (
     <Fragment>
         <div style={{
@@ -30,7 +30,6 @@ export function StarInfo({ isOpen, onClose, children }) {
                 }} aria-label={"close"}/>
         <Center py={6}>
             <Box 
-            
                 w={'full'}
                 h={"fit-content"}
                 // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -60,7 +59,7 @@ export function StarInfo({ isOpen, onClose, children }) {
                     </Text>
                     <Stack direction={'row'} align={'center'} justify={'center'}>
                         <Text fontSize={'4xl'} fontWeight={600}>
-                        T Tau
+                        {starData.name}
                         </Text>
                     </Stack>
                 </Stack>
@@ -70,36 +69,36 @@ export function StarInfo({ isOpen, onClose, children }) {
                         <HStack spacing={2}>
                             <List spacing={3}>
                                 <ListItem>
-                                <Text as="b">AUID:</Text> 000-000-000
+                                <Text as="b">AUID:</Text> {starData.auid}
                                 </ListItem>
                                 <ListItem>
-                                <Text as="b">RA:</Text> 12h 34m 56s
+                                <Text as="b">RA:</Text> {starData.ra}
                                 </ListItem>
                                 <ListItem>
-                                <Text as="b">Dec:</Text> 10° 20' 30"
+                                <Text as="b">Dec:</Text> {starData.dec}
                                 </ListItem>
                                 <ListItem>
-                                <Text as="b">Var. type:</Text> YSO
+                                <Text as="b">Var. type:</Text> {starData.varType}
                                 </ListItem>
                             </List>
                             <List spacing={3}>
                                 <ListItem>
-                                <Text as="b">Max. mag.:</Text> 10 V
+                                <Text as="b">Max. mag.:</Text> {starData.maxMag}
                                 </ListItem>
                                 <ListItem>
-                                <Text as="b">Min. mag.:</Text> 12 V
+                                <Text as="b">Min. mag.:</Text> {starData.minMag}
                                 </ListItem>
                                 <ListItem>
-                                <Text as="b">Period:</Text> 320 days
+                                <Text as="b">Period:</Text> {starData.period} days
                                 </ListItem>
                                 <ListItem>
-                                <Text as="b">Spec. type:</Text> G2
+                                <Text as="b">Spec. type:</Text> {starData.specType}
                                 </ListItem>
                             </List>
                         </HStack>
                     </Box>
                     { /*eslint-disable-next-line react-hooks/rules-of-hooks*/ }
-                    <Box bg={useColorModeValue('gray.100', 'gray.800')} px={6} py={10}>
+                    <Box bg={useColorModeValue('gray.100', 'gray.800')} px={6} py={10} flex="1">
                         <List spacing={3}>
                             <ListItem>
                                 <Text as="b">Rise:</Text> 8:30 PM
@@ -121,13 +120,16 @@ export function StarInfo({ isOpen, onClose, children }) {
                             bg={'blue.700'}
                             color={'white'}
                             rounded={'xl'}
+                            onClick={()=> window.open("https://www.aavso.org/LCGv2/index.htm?DateFormat=Julian&RequestedBands=&view=api.delim&ident=" +
+                                            starData.name + "&fromjd=2459399&tojd=2460129.702&delimiter=@@@", "_blank")}
                             boxShadow={'0 5px 20px 0px rgb(72 90 180 / 43%)'}
                             _hover={{
                             bg: 'blue.900',
                             }}
                             _focus={{
                             bg: 'blue.900',
-                            }}>
+                            }} 
+                            >
                             View light curve
                         </Button>
                     </Center>

@@ -98,10 +98,26 @@ const columns = [
   ]
 
 export default function StarDataTable() {
+    const initialSelectedStar: Star = {
+      altitude: '',
+      auid: '',
+      name: '',
+      const: '',
+      ra: '',
+      dec: '',
+      varType: '',
+      maxMag: '',
+      maxPass: '',
+      minMag: '',
+      minPass: '',
+      period: '',
+    };
+    
     const [loading, setLoading] = useState(false);
     const [states, dispatch] = useContext(Context);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedStar, setSelectedStar] = useState(initialSelectedStar);
 
     const toggleOverlay = () => {
       setIsOpen(!isOpen);
@@ -199,9 +215,7 @@ export default function StarDataTable() {
       return ( 
         <div className="p-2">
           <Center >
-            <StarInfo isOpen={isOpen} onClose={toggleOverlay} data-testid="overlay">
-              {/* children <p>Some info</p>*/}
-            </StarInfo>
+            <StarInfo isOpen={isOpen} onClose={toggleOverlay} starData={selectedStar} data-testid="overlay"/>
           </Center>
       <Table size='sm' maxWidth={"100%"}>
         <Thead>
@@ -237,7 +251,12 @@ export default function StarDataTable() {
           {table.getRowModel().rows.map(row => (
             <Tr key={row.id} >
               {row.getVisibleCells().map(cell => (
-                <Td key={cell.id} onClick={toggleOverlay}>
+                <Td key={cell.id} onClick={
+                  () => {
+                    setSelectedStar(cell.row.original);
+                    toggleOverlay();
+                  }
+                }>
                   
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Td>
