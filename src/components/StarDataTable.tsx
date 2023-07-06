@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react";
 import {
   SortingState,
     createColumnHelper,
@@ -8,13 +8,16 @@ import {
     getSortedRowModel,
     useReactTable,
   } from '@tanstack/react-table'
-import { Box, Button, Center, Flex, HStack, Input, Select, Skeleton, Stack, Td } from '@chakra-ui/react'
-import { useContext, useEffect, useState } from "react"
-import { Context } from "../Store"
+import { Box, Button, Center, Flex, HStack, Input, Select, Skeleton, Stack, Td, background, useColorModeValue } from '@chakra-ui/react'
+import { useEffect, useState } from "react"
+import { useSelector, useDispatch } from 'react-redux'
 import { Table, Tbody, Tfoot, Th, Thead, Tr, Text } from "@chakra-ui/react"
 import  {getStarCount, getStars}  from "./API.tsx"
 import StarInfo from "./StarInfo.tsx"
+import { RootState } from "../Store"
+import { updateStars, updateStarCount, setError } from "./slices/StarDataSlice"
 import { CheckCircleIcon} from "@chakra-ui/icons"
+import { updateLatitude, updateLongitude } from "./slices/ObserverSlice.ts";
 
 type Star = {
     altitude: string
@@ -98,6 +101,7 @@ const columns = [
   ]
 
 export default function StarDataTable() {
+  
     const initialSelectedStar: Star = {
       altitude: '',
       auid: '',
@@ -114,10 +118,14 @@ export default function StarDataTable() {
     };
     
     const [loading, setLoading] = useState(false);
-    const [states, dispatch] = useContext(Context);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [isOpen, setIsOpen] = useState(false);
     const [selectedStar, setSelectedStar] = useState(initialSelectedStar);
+
+    const stars = useSelector((state: RootState) => state.starData.stars)
+    const starCount = useSelector((state: RootState) => state.starData.starCount)
+    const latLong = useSelector((state: RootState) => state.observer.latLong)
+    const dispatch = useDispatch()
 
     const toggleOverlay = () => {
       setIsOpen(!isOpen);
@@ -132,7 +140,7 @@ export default function StarDataTable() {
           const response =res.data
           console.log(response)
           //setStarsData( res[0] )
-          dispatch({type: 'SET_STARS', payload: response[0]});
+          dispatch(updateStars(response[0]));
 
           //setData(res.data)
           console.log(data) 
@@ -142,7 +150,7 @@ export default function StarDataTable() {
     }
     ).catch((error) => {
       if (error.response) {
-        dispatch({type: 'SET_ERROR', payload: error});
+        dispatch(setError(error));
         console.log(error.response)
         console.log(error.response.status)
         console.log(error.response.headers)
@@ -157,7 +165,7 @@ export default function StarDataTable() {
         const response = res.data;
         console.log(response);
         //setStarsData( res[0] )
-        dispatch({type: 'SET_STAR_COUNT', payload: response});
+        dispatch(updateStarCount(response));
 
         //setData(res.data)
         console.log(data); 
@@ -167,12 +175,16 @@ export default function StarDataTable() {
     }
   ).catch((error) => {
     if (error.response) {
-      dispatch({type: 'SET_ERROR', payload: error});
+      dispatch(setError(error));
       console.log(error.response)
       console.log(error.response.status)
       console.log(error.response.headers)
       }
 })
+    const currDate = new Date().toLocaleDateString();
+    const currTime = new Date().toLocaleTimeString();
+
+
 
         //this runs the getData trigger function as useEffect
     useEffect(()=>{
@@ -183,7 +195,7 @@ export default function StarDataTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const data:Star[] = states.stars;//{ nodes: states.stars };
+    const data:Star[] = stars;//{ nodes: states.stars };
       // const [data, setData] = React.useState(() => [...defaultData])
       const table = useReactTable({
         data,
@@ -196,8 +208,8 @@ export default function StarDataTable() {
         getPaginationRowModel: getPaginationRowModel(),
        // pageCount: Math.ceil(data.length / 10) 
           })
-    
-      const starCount = states.starCount;
+
+      const hoverColor = useColorModeValue('gray.200', 'gray.700')
 
       if (loading) {
           return (<div>
@@ -249,7 +261,7 @@ export default function StarDataTable() {
         </Thead>
         <Tbody>
           {table.getRowModel().rows.map(row => (
-            <Tr key={row.id} >
+            <Tr key={row.id} _hover={{ backgroundColor: hoverColor }}>
               {row.getVisibleCells().map(cell => (
                 <Td key={cell.id} onClick={
                   () => {
@@ -365,12 +377,11 @@ export default function StarDataTable() {
               </option>
             ))}
           </Select>
-            
         </HStack>
-      </Center>
-      
+      </Center> 
+      <Text>{currDate}</Text> 
+      <Text>{currTime}</Text>  
     </div>
         );
     }
-
 

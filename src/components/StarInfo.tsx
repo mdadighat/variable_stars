@@ -3,7 +3,13 @@ import { Fragment } from "react";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { CloseIcon } from "@chakra-ui/icons";
 
-export function StarInfo({ isOpen, onClose, starData }) {
+type props = {
+    isOpen: boolean;
+    onClose: () => void;
+    starData: any;
+}
+
+export function StarInfo({ isOpen, onClose, starData }: props) {
     if (!isOpen) {
         return null;
     }

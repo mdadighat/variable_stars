@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, SetStateAction, useContext, useState } from 'react';
+import { ChangeEvent, ReactNode, SetStateAction, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import {
   IconButton,
   Box,
@@ -47,7 +47,9 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 //import { ReactComponent as Logo } from '../assets/logo.svg';
 import { ReactComponent as DarkLogo } from '../assets/logo_dk.svg';
-import Store, { Context } from '../Store.tsx';
+import {RootState} from '../Store.tsx';
+import { useSelector, useDispatch } from 'react-redux'
+import { updateLatitude, updateLongitude, updateDateTime } from './slices/ObserverSlice'
 import StarDataTable from './StarDataTable';
 import ObservationListTool from './ObservationListTool';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -77,7 +79,10 @@ export default function SidebarLayout({
   children: ReactNode;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
+  const dateTime = useSelector((state: RootState) => state.observer.dateTime)
+  const latitude = useSelector((state: RootState) => state.observer.latitude)
+  const longitude = useSelector((state: RootState) => state.observer.longitude)
+  const dispatch = useDispatch()
 
   return (
     <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.800')}>
@@ -102,14 +107,11 @@ export default function SidebarLayout({
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} paddingTop="20" style={{ top:0, left:0,bottom:0}} >
        {/* main content*/}
-        <Store>
-          
           <Routes>
             <Route path="/" element={<StarDataTable />}/>
             <Route path="/observing" element={<ObservationListTool />}/>
             <Route path="/visualizations" element={<VisualizationTool />}/>
           </Routes>
-        </Store>
       </Box>
     </Box>
   );
@@ -207,12 +209,23 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const toast = useToast();
-  const [states, dispatch] = useContext(Context);
+  const dateTime = useSelector((state: RootState) => state.observer.dateTime)
+  const latitude = useSelector((state: RootState) => state.observer.latitude)
+  const longitude = useSelector((state: RootState) => state.observer.longitude)
+  const dispatch = useDispatch()
+
+  const getCoords = async () => {
+    const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+    dispatch(updateLatitude(pos.coords.latitude));
+    dispatch(updateLongitude(pos.coords.longitude));
+  };
 
   //handle keydown event and check for enter key on datetime input
   function handleDateTimeChange(event: React.KeyboardEvent<HTMLInputElement>): void {
     if (event.key === 'Enter') {
-      dispatch({type: 'SET_DATETIME', payload: event.currentTarget.value})
+      dispatch(updateDateTime(event.currentTarget.value))
       toast({
         title: "Datetime change",
         description: event.currentTarget.value,
@@ -222,7 +235,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       })
     }
   }
-  
   
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>): void {
     toast({
@@ -244,10 +256,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     })
   }
 
-  
   function handleLatLongChange(event: React.KeyboardEvent<HTMLInputElement>): void {
     if (event.key === 'Enter') {
-      dispatch({type: 'SET_LATLONG', payload: event.currentTarget.value})
+      var latLong = event.currentTarget.value.split(',');
+      dispatch(updateLatitude(parseFloat(latLong[0])))
+      dispatch(updateLongitude(parseFloat(latLong[1])))
       toast({
         title: "LatLong change",
         description: event.currentTarget.value,
@@ -257,6 +270,13 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       })
     }
   }
+
+  const currDate = new Date();
+  currDate.setMinutes(currDate.getMinutes() - currDate.getTimezoneOffset());
+  dispatch(updateDateTime(currDate.toISOString().slice(0, 16)));
+  useLayoutEffect(() => {
+    getCoords();
+  }, []);
 
   return (
     <><div style={{position:"fixed", top:0, left:0,right:0, zIndex:2}} ><Flex
@@ -310,7 +330,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       <Input
         //value={value}
         onKeyDown={handleLatLongChange}
-        defaultValue={"32.222607, -110.974711"}
+        value={latitude && longitude && latitude.toString() + ',' + longitude.toString()}
         placeholder="Latitude, Longitude"
         size="sm"
       />
@@ -318,7 +338,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         placeholder="Select Date and Time"
         type="datetime-local"
         onKeyDown={handleDateTimeChange}
-        defaultValue={"2023-06-01T20:00"}
+        defaultValue={currDate.toISOString().slice(0, 16)}
         size='sm'
       />
         <IconButton

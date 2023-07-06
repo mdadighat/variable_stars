@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals"
 import * as serviceWorker from "./serviceWorker"
 import { BrowserRouter } from "react-router-dom"
 import ScrollToTop from "./components/ScrollToTop"
+import { store } from './Store'
+import { Provider } from 'react-redux'
 
 
 const container = document.getElementById("root")
@@ -17,7 +19,9 @@ root.render(
     <BrowserRouter>
       <ColorModeScript />
       <ScrollToTop />
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>,
 )

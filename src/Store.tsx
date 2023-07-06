@@ -1,50 +1,15 @@
-import React, { createContext, useReducer, ReactNode } from "react";
-import Reducer from './Reducer';
+import { configureStore } from '@reduxjs/toolkit'
+import observerReducer from './components/slices/ObserverSlice'
+import starDataReducer from './components/slices/StarDataSlice'
 
+export const store = configureStore({
+  reducer: {
+    observer: observerReducer,
+    starData: starDataReducer
+  },
+})
 
-type Star = {
-    altitude: string
-    auid: string
-    name: string
-    const: string
-    ra: string
-    dec: string
-    varType: string
-    maxMag: string
-    maxPass: string
-    minMag: string
-    minPass: string
-    period: string
-  }
-
-type InitialStateType = {
-    stars: Array<Star>;
-    starCount: any;
-    latLong: string;
-    dateTime: string;
-    error: null | string;
-}
-
-type StoreProps = {
-    children: ReactNode;
-}
-
-const initialState: InitialStateType = {
-    stars: [],
-    starCount: 0,
-    latLong: "",
-    dateTime: "",
-    error: null
-};
-
-const Store = ({ children }: StoreProps) => {
-    const [state, dispatch] = useReducer(Reducer, initialState);
-    return (
-        <Context.Provider value={[state, dispatch]}>
-            {children}
-        </Context.Provider>
-    )
-};
-
-export const Context = createContext<[InitialStateType, React.Dispatch<any>]>([initialState, () => null]);
-export default Store;
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch
