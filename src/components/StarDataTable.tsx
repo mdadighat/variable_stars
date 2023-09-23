@@ -206,7 +206,7 @@ export default function StarDataTable() {
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-       // pageCount: Math.ceil(data.length / 10) 
+        pageCount: Math.ceil(data.length / 10) 
           })
 
       const hoverColor = useColorModeValue('gray.200', 'gray.700')
@@ -369,6 +369,12 @@ export default function StarDataTable() {
             value={table.getState().pagination.pageSize}
             onChange={e => {
               table.setPageSize(Number(e.target.value))
+              table.setOptions(old => {
+                return{
+                  ...old,
+                  pageCount: Math.ceil(data.length / Number(e.target.value))
+                }
+              })
             }}
           >
             {[10, 25, 50, 100, 200].map(pageSize => (
@@ -379,8 +385,6 @@ export default function StarDataTable() {
           </Select>
         </HStack>
       </Center> 
-      <Text>{currDate}</Text> 
-      <Text>{currTime}</Text>  
     </div>
         );
     }

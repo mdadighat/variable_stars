@@ -1,6 +1,6 @@
 from flask import Flask, request
 from sqlalchemy import func, select
-from config import Configuration
+from core.config import Configuration
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask import jsonify
