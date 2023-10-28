@@ -1,1 +1,1 @@
-web: gunicorn --chdir backend base:app :8000ßß
+web: npm start
