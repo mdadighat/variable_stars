@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from sqlalchemy import func, select
 from core.config import Configuration
 from flask_sqlalchemy import SQLAlchemy
@@ -12,7 +12,7 @@ import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../build',static_url_path='')
 app.config.from_object(Configuration)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -23,6 +23,10 @@ app.register_blueprint(star_blueprint)
 CORS(app)
 
 from core import views, models
+
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/stars_test')
 def get_stars_test():

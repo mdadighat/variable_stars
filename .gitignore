@@ -13,7 +13,6 @@ backend/variable_stars.db
 backend/vsxdata.db
 backend/dump.sql
 data/vsxdata.csv
-/build
 package-lock.json
 
 #ignore virtual environment
