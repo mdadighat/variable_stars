@@ -2,11 +2,10 @@
 FROM node:alpine as build-step
 WORKDIR /variable_stars
 ENV PATH /variable_stars/node_modules/.bin:$PATH
+COPY . ./
 COPY package.json package-lock.json ./
-RUN npm i
-# add app
-COPY . ./build
-RUN npm run
+RUN npm install
+RUN npm run build
 
 # Build step #2: build an nginx container
 FROM nginx:stable-alpine

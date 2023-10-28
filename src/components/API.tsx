@@ -7,7 +7,7 @@ interface Params {
 
 //config for get request note that the method as changed to get this is very important
 const getConfig : Params = {
-    baseUrl: "http://localhost:8000/",
+    baseUrl: "http://0.0.0.0:8000/",
     method: 'GET',
 }
 

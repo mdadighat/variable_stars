@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.11-slim
 
 RUN useradd core
 
@@ -9,6 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY core core
 COPY base.py ./
+COPY vsxdata.db ./core
 
 ENV FLASK_APP base.py
 
@@ -17,4 +18,4 @@ USER core
 
 EXPOSE 8000
 
-CMD [ "gunicorn", "-b", ":8000", "--access-logfile", "-", "base:app", "--workers=4"]
+CMD [ "gunicorn", "-b",x "--access-logfile", "-", "base:app", "--workers=4"]
