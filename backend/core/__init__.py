@@ -12,7 +12,7 @@ import jsonpickle.ext.numpy as jsonpickle_numpy
 jsonpickle_numpy.register_handlers()
 
 
-app = Flask(__name__, static_folder='../build',static_url_path='')
+app = Flask(__name__, static_folder='../../build',static_url_path='')
 app.config.from_object(Configuration)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
