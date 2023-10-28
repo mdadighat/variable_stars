@@ -1,1 +1,1 @@
-web: gunicorn base:app :8000
+web: gunicorn --chdir backend ßbase:app :8000ßß
