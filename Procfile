@@ -1,1 +1,2 @@
-web: node server.js && gunicorn --chdir backend base:app :8000
+web: node server.js
+worker: gunicorn --chdir backend base:app :8000
