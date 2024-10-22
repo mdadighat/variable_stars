@@ -9,7 +9,10 @@ import jsonpickle
 from flask_cors import CORS
 from core.tools.location import get_altitude
 import jsonpickle.ext.numpy as jsonpickle_numpy
+from astropy.coordinates import EarthLocation
+from astropy.time import Time
 jsonpickle_numpy.register_handlers()
+
 
 
 app = Flask(__name__, static_folder='../../build',static_url_path='')
@@ -22,7 +25,7 @@ from .star import star as star_blueprint
 app.register_blueprint(star_blueprint)
 CORS(app)
 
-from core import views, models
+
 
 @app.route('/')
 def serve():
@@ -47,15 +50,24 @@ def get_stars_test():
     return jsonResponse
 
 @app.route('/stars')
-
-
 def get_stars():
+    latitude = request.args.get('lat', type=float)
+    longitude = request.args.get('long', type=float)
+    elevation = request.args.get('elevation', type=float)
+    jd = request.args.get('jd', type=float)
+
+    # Check if any of the arguments is None
+    if latitude is None or longitude is None or elevation is None or jd is None:
+        return "Error: Missing one or more required parameters (lat, long, elevation, jd)"
+
+    location = EarthLocation.from_geodetic(longitude, latitude, elevation)
+    time = Time(jd, format='jd')
     #sql alchemy pagination
 
     page= request.args.get("page", 1, type=int)
     per_page = request.args.get("per-page", 100, type=int)
     stars = models.Vsxdata.query.paginate(page=page, per_page=per_page, error_out=False)
-    stars = get_altitude(stars) 
+    stars = get_altitude(stars, location, time) 
     response_body = []
 
     starJson = jsonpickle.encode(stars.items)
@@ -64,7 +76,7 @@ def get_stars():
 
     jsonResponse = jsonify(response_body)
     jsonResponse.headers.add("Content-Type", "application/json")
-    jsonResponse.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    jsonResponse.headers.add("Access-Control-Allow-Origin", "http://localhost:4173")
     jsonResponse.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
     jsonResponse.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
     jsonResponse.headers.add("Access-Control-Allow-Credentials", "true")
@@ -77,7 +89,7 @@ def get_star_count():
 
     jsonResponse = jsonify(row_count)
     jsonResponse.headers.add("Content-Type", "application/json")
-    jsonResponse.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    jsonResponse.headers.add("Access-Control-Allow-Origin", "http://localhost:4173")
     jsonResponse.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
     jsonResponse.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
     jsonResponse.headers.add("Access-Control-Allow-Credentials", "true")

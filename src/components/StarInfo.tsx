@@ -52,7 +52,7 @@ export function StarInfo({ isOpen, onClose, starData }: props) {
                     color={useColorModeValue('gray.800', 'white')}
                     align={'center'}>
             
-                    <Text
+                    {/* <Text
                         fontSize={'sm'}
                         fontWeight={500}
                         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -62,7 +62,7 @@ export function StarInfo({ isOpen, onClose, starData }: props) {
                         color={'red.400'}
                         rounded={'full'}>
                         Young Stellar Object
-                    </Text>
+                    </Text> */}
                     <Stack direction={'row'} align={'center'} justify={'center'}>
                         <Text fontSize={'4xl'} fontWeight={600}>
                         {starData.name}

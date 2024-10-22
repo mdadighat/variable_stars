@@ -22,7 +22,10 @@ import {
   Select,
   Button,
   Center,
+  chakra,
+  InputRightElement,
 } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   FiHome,
   FiStar,
@@ -32,13 +35,15 @@ import {
 } from 'react-icons/fi';
 import {
   FaGithub,
-   FaListUl
+   FaListUl,
+   FaChartBar,
+   FaBook
   } from 'react-icons/fa';
 import {
     Route,
     Link as RouterLink, Routes
 } from "react-router-dom";
-//import useFieldFormatter from "format-as-you-type";
+
 
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
@@ -52,9 +57,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import { updateLatitude, updateLongitude, updateDateTime } from './slices/ObserverSlice'
 import StarDataTable from './StarDataTable';
 import ObservationListTool from './ObservationListTool';
-import { SearchIcon } from '@chakra-ui/icons';
 import BuyMeACoffeeButton from './BuyMeACoffeeButton.tsx';
 import VisualizationTool from './VisualizationTool.tsx';
+import Location from './Location.tsx';
 
 
 interface LinkItemProps {
@@ -66,8 +71,8 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
     { name: "Home", icon: FiHome, path:"/"},
     { name: "Observing", icon: FaListUl, path: "/observing"},
-    { name: "Visualizations", icon: FaListUl, path: "/visualizations"},
-    { name: "Learn More", icon: FiStar, path:"/learn" },
+    { name: "Visualizations", icon: FaChartBar, path: "/visualizations"},
+    { name: "Learn More", icon: FaBook, path:"/learn" },
     { name: "Settings", icon: FiSettings, path:"/settings" }
   ];
 
@@ -83,6 +88,7 @@ export default function SidebarLayout({
   const latitude = useSelector((state: RootState) => state.observer.latitude)
   const longitude = useSelector((state: RootState) => state.observer.longitude)
   const dispatch = useDispatch()
+
 
   return (
     <Box minH="100vh" overflowX="scroll" bg={useColorModeValue('gray.100', 'gray.800')}>
@@ -105,7 +111,7 @@ export default function SidebarLayout({
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} paddingTop="20" style={{ top:0, left:0,bottom:0}} >
+      <Box ml={{ base: 0, md: 60 }} style={{ top:0, left:0,bottom:0}} >
        {/* main content*/}
           <Routes>
             <Route path="/" element={<StarDataTable />}/>
@@ -158,7 +164,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           </Button>
         </Center>
         <BuyMeACoffeeButton />
-        <Text fontSize="xs" color ='white'>© 2023 Tauridos. All rights reserved</Text>
+        <Text fontSize="xs" color ='white'>© 2024 Tauridos. All rights reserved</Text>
       </VStack>
       </DarkMode>
     </Box>
@@ -209,148 +215,129 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const toast = useToast();
-  const dateTime = useSelector((state: RootState) => state.observer.dateTime)
-  const latitude = useSelector((state: RootState) => state.observer.latitude)
-  const longitude = useSelector((state: RootState) => state.observer.longitude)
-  const dispatch = useDispatch()
+  const dateTime = useSelector((state: RootState) => state.observer.dateTime);
+  const dispatch = useDispatch();
 
-  const getCoords = async () => {
-    const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
-    dispatch(updateLatitude(pos.coords.latitude));
-    dispatch(updateLongitude(pos.coords.longitude));
-  };
-
-  //handle keydown event and check for enter key on datetime input
   function handleDateTimeChange(event: React.KeyboardEvent<HTMLInputElement>): void {
     if (event.key === 'Enter') {
-      dispatch(updateDateTime(event.currentTarget.value))
+      dispatch(updateDateTime(event.currentTarget.value));
       toast({
         title: "Datetime change",
         description: event.currentTarget.value,
         status: 'success',
         duration: 4000,
         isClosable: true
-      })
+      });
     }
   }
   
-  function handleSearchChange(event: ChangeEvent<HTMLInputElement>): void {
-    toast({
-      title: "Search change",
-      description: event.target.value,
-      status: 'success',
-      duration: 4000,
-      isClosable: true
-    })
-  }
 
-  function handleSearchSubmit(event: ChangeEvent<HTMLInputElement>): void {
-      toast({
-      title: "Search submit",
-      description: event.target.value,
-      status: 'success',
-      duration: 2000,
-      isClosable: true,
-    })
-  }
-
-  function handleLatLongChange(event: React.KeyboardEvent<HTMLInputElement>): void {
-    if (event.key === 'Enter') {
-      var latLong = event.currentTarget.value.split(',');
-      dispatch(updateLatitude(parseFloat(latLong[0])))
-      dispatch(updateLongitude(parseFloat(latLong[1])))
-      toast({
-        title: "LatLong change",
-        description: event.currentTarget.value,
-        status: 'success',
-        duration: 4000,
-        isClosable: true
-      })
-    }
-  }
 
   const currDate = new Date();
   currDate.setMinutes(currDate.getMinutes() - currDate.getTimezoneOffset());
-  dispatch(updateDateTime(currDate.toISOString().slice(0, 16)));
   useLayoutEffect(() => {
-    getCoords();
+    dispatch(updateDateTime(currDate.toISOString().slice(0, 16)));
   }, []);
 
+  const adjustDateTime = (hours: number) => {
+    const currentDate = new Date(dateTime);
+    
+    // Adjust the time
+    currentDate.setHours(currentDate.getHours() + hours);
+    
+    // Format the date to YYYY-MM-DDTHH:mm
+    const newDateTime = currentDate.getFullYear() + '-' +
+      String(currentDate.getMonth() + 1).padStart(2, '0') + '-' +
+      String(currentDate.getDate()).padStart(2, '0') + 'T' +
+      String(currentDate.getHours()).padStart(2, '0') + ':' +
+      String(currentDate.getMinutes()).padStart(2, '0');
+
+    dispatch(updateDateTime(newDateTime));
+  };
+
+  const setNow = () => {
+    const now = new Date();
+    const nowString = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + 'T' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+    dispatch(updateDateTime(nowString));
+  };
+
   return (
-    <><div style={{position:"fixed", top:0, left:0,right:0, zIndex:2}} ><Flex
+    <Flex
       ml={{ base: 0, md: 60 }}
-      px={{ base: 4, md: 4 }}
-      height="20"
+      px={2}
+      height="16"
       alignItems="center"
       bg={useColorModeValue('white', 'gray.900')}
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
-      justifyContent={{ base: 'space-between', md: 'flex-end' }}
-      zIndex={40}
-      {...rest}>
+      justifyContent="space-between"
+      {...rest}
+    >
       <IconButton
         display={{ base: 'flex', md: 'none' }}
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
-        icon={<FiMenu />} />
-
-      <Text
-        display={{ base: 'flex', md: 'none' }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold">
-        Variable Stars
-      </Text>
-
-      
-      <HStack spacing={{ base: '0', md: '4' }}>
-      <Select borderColor='blue.900' variant='filled' placeholder="What's up now?" size={"sm"}>
-        <option value="tenStarN">10 Star Tutorial - N</option>
-        <option value="tenStarS">10 Star Tutorial - S</option>
-        <option value="yso">Young Stellar Objects</option>
-      </Select>
-      <InputGroup>
-        <InputLeftElement pointerEvents='none' h="full">
-          <SearchIcon color='gray.300'  />
-        </InputLeftElement>
-        <Input
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          name="navBarSearch"
-          data-testid="navBarSearch"
-          onChange={handleSearchChange}
-          onSubmit={handleSearchSubmit}
-          size='sm'
-        />
-      </InputGroup>
-      <Input
-        //value={value}
-        onKeyDown={handleLatLongChange}
-        value={latitude && longitude && latitude.toString() + ',' + longitude.toString()}
-        placeholder="Latitude, Longitude"
+        icon={<FiMenu />}
         size="sm"
       />
-      <Input
-        placeholder="Select Date and Time"
-        type="datetime-local"
-        onKeyDown={handleDateTimeChange}
-        defaultValue={currDate.toISOString().slice(0, 16)}
-        size='sm'
-      />
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          icon={<FiBell />} />
-        <ColorModeSwitcher />
 
+      <HStack spacing={2} flex={1} justifyContent="flex-end">
+
+        <Location />
+
+        <InputGroup width={{ base: "auto", md: "300px", lg: "350px" }} minW="250px">
+          <Input
+            placeholder="Date/Time"
+            type="datetime-local"
+            value={dateTime}
+            onChange={(e) => dispatch(updateDateTime(e.target.value))}
+            pr="8rem"
+            size="sm"
+          />
+          <InputRightElement width="8rem" height="100%">
+            <Flex height="100%" alignItems="center" justifyContent="center">
+              <HStack spacing={1}>
+                <IconButton
+                  aria-label="Decrease time by 1 hour"
+                  icon={<ChevronLeftIcon />}
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => adjustDateTime(-1)}
+                />
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  onClick={setNow}
+                >
+                  Now
+                </Button>
+                <IconButton
+                  aria-label="Increase time by 1 hour"
+                  icon={<ChevronRightIcon />}
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => adjustDateTime(1)}
+                />
+              </HStack>
+            </Flex>
+          </InputRightElement>
+        </InputGroup>
+
+        <IconButton
+          size="sm"
+          variant="ghost"
+          aria-label="notifications"
+          icon={<FiBell />}
+          display={{ base: 'none', lg: 'flex' }}
+        />
+
+        <ColorModeSwitcher size="sm" />
       </HStack>
     </Flex>
-    </div></>
-
   );
 };

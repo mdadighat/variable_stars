@@ -7,14 +7,21 @@ interface Params {
 
 //config for get request note that the method as changed to get this is very important
 const getConfig : Params = {
-    baseUrl: "http://0.0.0.0:8000/",
+    baseUrl: "http://127.0.0.1:8000/",
     method: 'GET',
 }
 
-export const getStars = async (page: number, perPage: number): Promise<any> =>{
+export const getStars = async (page: number, perPage: number, lat: number, 
+    long: number, elevation: number, jd: number): Promise<any> =>{
+    
+    // Construct the URL
+    const url = `${getConfig.baseUrl}stars?page=${page}&per-page=${perPage}&lat=${lat}&long=${long}&elevation=${elevation}&jd=${jd}`;
+    
+    // Log the URL to the console
+    console.log("Fetching stars from URL:", url);
     return await axios({
         ...getConfig,
-        url: `${getConfig.baseUrl}` + `stars` + `?page=${page}&per-page=${perPage}`,
+        url: url,
         headers: {
             'Content-Type': 'application/json',
         },
