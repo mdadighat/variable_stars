@@ -48,14 +48,3 @@ ENV PORT=8000
 
 # Run the application
 CMD ["gunicorn", "--config=gunicorn.conf.py", "base:app"]
-
-# Copy compressed SQL dump
-COPY backend/core/vsxdata.sql.gz ./core/
-
-# Install sqlite3
-RUN apt-get update && apt-get install -y sqlite3
-
-# Decompress and restore database
-RUN gunzip ./core/vsxdata.sql.gz && \
-    sqlite3 ./core/vsxdata.db < ./core/vsxdata.sql && \
-    rm ./core/vsxdata.sql
