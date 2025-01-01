@@ -1,13 +1,37 @@
-# Build step #1: build the React front end
-FROM node:alpine as build-step
-WORKDIR /variable_stars
-ENV PATH /variable_stars/node_modules/.bin:$PATH
-COPY . ./
-COPY package.json package-lock.json ./
+# Use multi-stage build
+FROM node:16 AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
 RUN npm install
+COPY frontend/ ./
 RUN npm run build
 
-# Build step #2: build an nginx container
-FROM nginx:stable-alpine
-COPY --from=build-step /variable_stars/build /usr/share/nginx/html
-COPY backend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy Python requirements
+COPY backend/requirements.txt .
+COPY runtime.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend code
+COPY backend/ ./backend/
+
+# Copy built frontend from previous stage
+COPY --from=frontend-build /app/frontend/build ./build
+
+# Set environment variables
+ENV FLASK_APP=backend/base.py
+ENV PORT=8000
+
+# Run the application
+CMD gunicorn --bind 0.0.0.0:$PORT backend.base:app
