@@ -33,7 +33,8 @@ CORS(app, resources={
             "http://localhost:8000",
             "http://127.0.0.1:8000",
             "http://localhost:4173",
-            "http://127.0.0.1:4173"
+            "http://127.0.0.1:4173",
+            "https://variable-stars-5902815da3d5.herokuapp.com/"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
@@ -49,7 +50,8 @@ def after_request(response):
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "http://localhost:4173",
-        "http://127.0.0.1:4173"
+        "http://127.0.0.1:4173",
+        "https://variable-stars-5902815da3d5.herokuapp.com/"
     ]:
         response.headers.add('Access-Control-Allow-Origin', origin)
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
