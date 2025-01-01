@@ -60,6 +60,7 @@ import ObservationListTool from './ObservationListTool';
 import BuyMeACoffeeButton from './BuyMeACoffeeButton.tsx';
 import VisualizationTool from './VisualizationTool.tsx';
 import Location from './Location.tsx';
+import ObjectInfo from './ObjectInfo';
 
 
 interface LinkItemProps {
@@ -111,13 +112,17 @@ export default function SidebarLayout({
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} style={{ top:0, left:0,bottom:0}} >
-       {/* main content*/}
-          <Routes>
-            <Route path="/" element={<StarDataTable />}/>
-            <Route path="/observing" element={<ObservationListTool />}/>
-            <Route path="/visualizations" element={<VisualizationTool />}/>
-          </Routes>
+      <Box 
+        ml={{ base: 0, md: 60 }} 
+        height="calc(100vh - 72px)"
+        overflow="hidden"
+        position="relative"
+      >
+        <Routes>
+          <Route path="/" element={<ObjectInfo />}/>
+          <Route path="/observing" element={<ObservationListTool />}/>
+          <Route path="/visualizations" element={<VisualizationTool />}/>
+        </Routes>
       </Box>
     </Box>
   );
@@ -269,12 +274,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     <Flex
       ml={{ base: 0, md: 60 }}
       px={2}
-      height="16"
+      minHeight="16"
       alignItems="center"
       bg={useColorModeValue('white', 'gray.900')}
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent="space-between"
+      flexWrap="wrap"
+      gap={2}
       {...rest}
     >
       <IconButton
@@ -286,11 +293,19 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         size="sm"
       />
 
-      <HStack spacing={2} flex={1} justifyContent="flex-end">
-
+      <Flex
+        flex={1}
+        justifyContent="flex-end"
+        alignItems="center"
+        flexWrap="wrap"
+        gap={2}
+      >
         <Location />
 
-        <InputGroup width={{ base: "auto", md: "300px", lg: "350px" }} minW="250px">
+        <InputGroup 
+          width={{ base: "100%", sm: "auto" }}
+          minW={{ base: "unset", sm: "250px" }}
+        >
           <Input
             placeholder="Date/Time"
             type="datetime-local"
@@ -336,8 +351,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           display={{ base: 'none', lg: 'flex' }}
         />
 
-        <ColorModeSwitcher size="sm" />
-      </HStack>
+        <ColorModeSwitcher />
+      </Flex>
     </Flex>
   );
 };

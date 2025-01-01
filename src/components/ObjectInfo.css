@@ -1,0 +1,48 @@
+.object-info-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.top-section {
+  background: white;
+  padding: 10px;
+  overflow: auto;
+}
+
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: white;
+  overflow: hidden;
+}
+
+.info-section,
+.observing-plan-section {
+  padding: 10px;
+  overflow: auto;
+}
+
+.resize-handle {
+  height: 8px;
+  background: #eee;
+  cursor: row-resize;
+  position: relative;
+}
+
+.resize-handle:hover {
+  background: #ddd;
+}
+
+.resize-handle::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 2px;
+  background: #999;
+  border-radius: 1px;
+} 

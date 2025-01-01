@@ -14,12 +14,12 @@ import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from 'react-redux'
 import { Table, Tbody, Tfoot, Th, Thead, Tr, Text } from "@chakra-ui/react"
 import  {getStarCount, getStars}  from "./API.tsx"
-import StarInfo from "./StarInfo.tsx"
 import { RootState } from "../Store"
-import { updateStars, updateStarCount, setError } from "./slices/StarDataSlice"
+import { updateStars, updateStarCount, setError, setSelectedStarInfo } from "./slices/StarDataSlice"
 import { CheckCircleIcon} from "@chakra-ui/icons"
 import { updateLatitude, updateLongitude } from "./slices/ObserverSlice.ts";
 import { SearchIcon } from '@chakra-ui/icons';
+import StarInfo from './StarInfo'
 
 
 type Star = {
@@ -54,50 +54,56 @@ const columns = [
     }),
   columnHelper.accessor('altitude', {
     header: () => 'Alt.',
-      cell: info => info.renderValue() + '°',
+      cell: info => <Text fontSize="xs">{info.renderValue()}°</Text>,
       footer: 'Alt.',
       enableMultiSort: true
     }),
     columnHelper.accessor('name', {
       header: () => 'Name',
-      cell: info => info.renderValue(),
+      cell: info => <Text fontSize="xs">{info.renderValue()}</Text>,
       footer: info => info.column.id,
       enableMultiSort: true
     }),
     columnHelper.accessor('const', {
       header: () => 'Const.',
-      cell: info => info.renderValue(),
+      cell: info => <Text fontSize="xs">{info.renderValue()}</Text>,
       footer: 'Const.',
       enableMultiSort: true,
     }),
     columnHelper.accessor('ra', {
       header: () => <span>RA</span>,
-      footer: info => info.column.id,
+      cell: info => <Text fontSize="xs">{info.renderValue()}°</Text>,
+      footer: info => <Text fontSize="xs">{info.column.id}</Text>,
       enableMultiSort: true,
     }),
     columnHelper.accessor('dec', {
       header: 'Dec',
-      footer: info => info.column.id,
+      cell: info => <Text fontSize="xs">{info.renderValue()}°</Text>,
+      footer: info => <Text fontSize="xs">{info.column.id}</Text>,
       enableMultiSort: true,
     }),
     columnHelper.accessor('varType', {
       header: 'Var. Type',
       footer: 'Var. Type',
+      cell: info => <Text fontSize="xs">{info.renderValue()}</Text>,
       enableMultiSort: true,
     }),
     columnHelper.accessor(row => `${row.maxMag} ${row.maxPass}`, {
       header: 'Max',
-      footer: info => info.column.id,
+      cell: info => <Text fontSize="xs">{info.renderValue()}</Text>,
+      footer: info => <Text fontSize="xs">{info.column.id}</Text>,
       enableMultiSort: true,
     }),
     columnHelper.accessor(row => `${row.minMag} ${row.minPass}`, {
       header: 'Min',
-      footer: info => info.column.id,
+      cell: info => <Text fontSize="xs">{info.renderValue()}</Text>,
+      footer: info => <Text fontSize="xs">{info.column.id}</Text>,
       enableMultiSort: true,
     }),
     columnHelper.accessor('period', {
-      header: 'Period',
-      footer: info => info.column.id,
+      header: 'Period (days)',
+      cell: info => <Text fontSize="xs">{info.renderValue()}</Text>,
+      footer: info => <Text fontSize="xs">{info.column.id}</Text>,
       enableMultiSort: true,
     }),
 
@@ -124,8 +130,7 @@ export default function StarDataTable() {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [isOpen, setIsOpen] = useState(false);
     const [selectedStar, setSelectedStar] = useState(initialSelectedStar);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(10);
 
     const stars = useSelector((state: RootState) => state.starData.stars)
@@ -142,73 +147,41 @@ export default function StarDataTable() {
     const now = new Date();
     const jd = (now.getTime() / 86400000) + 2440587.5;  
     //function below triggers the helper function
-    const getData = () => getStars(currentPage, 50, lat || 0, long || 0, 0, jd).then(
-      (res) => {
-        if (res.status === 200) {
-          const response = res.data;
-          console.log(response);
-          dispatch(updateStars(response[0]));
-          console.log(data);
-        } else {
-          console.log(res);
-        }
-      }
-    ).catch((error) => {
-      if (error.response) {
-        dispatch(setError(error));
-        console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
-        }
-  }).finally(()=> {
-    setLoading(false);
-  })
-
-  // Function to handle page change
-  const handlePageChange = (newPage: React.SetStateAction<number>) => {
-    setCurrentPage(newPage);
-    getData();
-  };
-
-
-  const getStarTotal = () => getStarCount().then(
-    (res) => {
-      if(res.status === 200){
-        const response = res.data;
-        console.log(response);
-        //setStarsData( res[0] )
-        dispatch(updateStarCount(response));
-
-        //setData(res.data)
-        console.log(data); 
-      } else {
-        console.log(res);
-      }
-    }
-  ).catch((error) => {
-    if (error.response) {
-      dispatch(setError(error));
-      console.log(error.response)
-      console.log(error.response.status)
-      console.log(error.response.headers)
-      }
-})
-    const currDate = new Date().toLocaleDateString();
-    const currTime = new Date().toLocaleTimeString();
-
-
-
-    //this runs the getData trigger function as useEffect
-    useEffect(()=>{
+    const getData = async (page: number, size: number) => {
       setLoading(true);
-      getStarTotal();
-      getData();
+      try {
+        const res = await getStars(page + 1, size, lat || 0, long || 0, 0, jd);
+        if (res.status === 200) {
+          dispatch(updateStars(res.data[0]));
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        dispatch(setError(error instanceof Error ? error.message : String(error)));
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage])
+    const getStarTotal = async () => {
+      try {
+        const res = await getStarCount();
+        if (res.status === 200) {
+          dispatch(updateStarCount(res.data));
+        }
+      } catch (error) {
+        console.error("Error fetching star count:", error);
+        dispatch(setError(error instanceof Error ? error.message : String(error)));
+      }
+    };
+
+    // Fetch star count separately
+    useEffect(() => {
+      getStarTotal();
+      getData(pageIndex, pageSize);
+    }, []); // Only on mount
 
     const data:Star[] = stars;//{ nodes: states.stars };
-    // const [data, setData] = React.useState(() => [...defaultData])
+    //const [data, setData] = React.useState(() => [...defaultData])
 
     // Define pageSize state
 
@@ -217,25 +190,32 @@ export default function StarDataTable() {
     const pageCount = Math.ceil(starCount / pageSize);
 
     const table = useReactTable({
-      data,
+      data: stars,
       columns,
       enableMultiSort: true,
-      state: { sorting },
+      state: { 
+        sorting,
+        pagination: {
+          pageIndex,
+          pageSize,
+        }
+      },
       onSortingChange: setSorting,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      pageCount: pageCount,
-      pageSize: pageSize,
-      pageIndex: currentPage,
-    } as TableOptions<Star>)
-
-    // Update pageCount when data or pageSize changes
-    useEffect(() => {
-      const pageCount = Math.ceil(starCount / pageSize);
-      table.setPageCount(pageCount);
-      table.setPageSize(pageSize);
-    }, [data, pageSize, table]);
+      manualPagination: true,
+      pageCount: Math.ceil(starCount / pageSize),
+      onPaginationChange: (updater) => {
+        if (typeof updater === 'function') {
+          const newState = updater({
+            pageIndex,
+            pageSize,
+          });
+          setPageIndex(newState.pageIndex);
+          getData(newState.pageIndex, newState.pageSize);
+        }
+      },
+    });
 
     const hoverColor = useColorModeValue('gray.200', 'gray.700')
 
@@ -258,6 +238,18 @@ export default function StarDataTable() {
         isClosable: true,
       });
     }
+    const handleStarClick = (star: Star) => {
+      dispatch(setSelectedStarInfo({
+        name: star.name,
+        auid: star.auid,
+        ra: star.ra ? parseFloat(star.ra) : undefined,
+        dec: star.dec ? parseFloat(star.dec) : undefined,
+        varType: star.varType,
+        maxMag: star.maxMag ? parseFloat(star.maxMag) : undefined,
+        minMag: star.minMag ? parseFloat(star.minMag) : undefined,
+        period: star.period ? parseFloat(star.period) : undefined
+      }));
+    };
 
   if (loading) {
     return (<div>
@@ -313,7 +305,7 @@ export default function StarDataTable() {
           </InputGroup>
         </HStack>
 
-            <Table size='sm' maxWidth={"100%"}>
+            <Table size='sm' maxWidth={"100%"} style={{fontSize: "sm"}}>
               <Thead>
                 {table.getHeaderGroups().map(headerGroup => (
                   <Tr key={headerGroup.id}>
@@ -347,12 +339,7 @@ export default function StarDataTable() {
                 {table.getRowModel().rows.map(row => (
                   <Tr key={row.id} _hover={{ backgroundColor: hoverColor }}>
                     {row.getVisibleCells().map(cell => (
-                      <Td key={cell.id} onClick={
-                        () => {
-                          setSelectedStar(cell.row.original);
-                          toggleOverlay();
-                        }
-                      }>
+                      <Td key={cell.id} onClick={() => handleStarClick(cell.row.original)}>
                         
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
@@ -378,87 +365,66 @@ export default function StarDataTable() {
               </Tfoot>
             </Table>
             
-            <Center overflowX={"scroll"}>
-              <HStack paddingTop={4} paddingBottom={4}>    
+            <Center>
+              <HStack paddingTop={2} paddingBottom={2}>    
                 <Button
-                  zIndex={0}
-                  border={'1px'}
-                  borderRadius='10px'
-                  background={"blue.800"}
-                  color={"white"}
-                  _hover={{ bg: 'gray.600' }}
                   onClick={() => table.setPageIndex(0)}
-                  disabled={!table.getCanPreviousPage()}
+                  disabled={pageIndex === 0}
+                  size="xs"
                 >
                   {'<<'}
                 </Button>
                 <Button
-                  zIndex={0}
-                  border={'1px'}
-                  borderRadius='10px'
-                  background={"blue.800"}
-                  color={"white"}
-                  _hover={{ bg: 'gray.600' }}
                   onClick={() => {
-                    table.setPageIndex(table.getState().pagination.pageIndex - 1);
-                    // Update currentPage if you're using it
-                    setCurrentPage(table.getState().pagination.pageIndex - 1);
+                    const prevPage = pageIndex - 1;
+                    if (prevPage >= 0) {
+                      table.setPageIndex(prevPage);
+                    }
                   }}
-                  disabled={!table.getCanPreviousPage()}
+                  disabled={pageIndex === 0}
+                  size="xs"
                 >
                   {'<'}
                 </Button>
 
-                <Text>Page</Text>
-                <strong>
-                  {table.getState().pagination.pageIndex + 1} of{' '}
-                  {table.getPageCount()}
-                </strong>
-
+                <Text fontSize="xs">Page </Text>
+                <Text fontSize="xs">
+                  <strong style={{fontSize: "xs"}}>
+                    {pageIndex + 1} of {Math.ceil(starCount / pageSize)}
+                  </strong>
+                </Text>
                 <Button
-                  border={'1px'}
-                  borderRadius='10px'
-                  background={"blue.800"}
-                  color={"white"}
-                  _hover={{ bg: 'gray.600' }}
                   onClick={() => {
-                    table.setPageIndex(table.getState().pagination.pageIndex + 1);
-                    // Update currentPage if you're using it
-                    setCurrentPage(table.getState().pagination.pageIndex + 1);
+                    const nextPage = pageIndex + 1;
+                    if (nextPage < Math.ceil(starCount / pageSize)) {
+                      table.setPageIndex(nextPage);
+                    }
                   }}
-                  disabled={!table.getCanNextPage()}
+                  disabled={pageIndex >= Math.ceil(starCount / pageSize) - 1}
+                  size="xs"
                 >
                   {'>'}
                 </Button>
                 <Button
-                  border={'1px'}
-                  borderRadius='10px'
-                  background={"blue.800"}
-                  color={"white"}
-                  _hover={{ bg: 'gray.600' }}
-                  onClick={() => {
-                    table.setPageIndex(table.getPageCount() - 1);
-                    // Update currentPage if you're using it
-                    setCurrentPage(table.getPageCount() - 1);
-                  }}
-                  disabled={!table.getCanNextPage()}
+                  onClick={() => table.setPageIndex(Math.ceil(starCount / pageSize) - 1)}
+                  disabled={pageIndex >= Math.ceil(starCount / pageSize) - 1}
+                  size="xs"
                 >
                   {'>>'}
                 </Button>
 
-                <Text>Go to page:</Text>
+                <Text fontSize="xs">Go to page:</Text>
                 
                 <Input
                   width={20}
                   type="number"
-                  defaultValue={table.getState().pagination.pageIndex + 1}
+                  defaultValue={pageIndex + 1}
                   onChange={e => {
                     const page = e.target.value ? Number(e.target.value) - 1 : 0;
                     table.setPageIndex(page);
-                    // Update currentPage if you're using it
-                    setCurrentPage(page);
                   }}
                   className="border p-1 rounded w-16"
+                  size="xs"
                 />
         
 
@@ -471,6 +437,7 @@ export default function StarDataTable() {
                     setPageSize(newPageSize);
                     table.setPageSize(newPageSize); // Ensure the table updates the page size
                   }}
+                  size="xs"
                 >
                   {[10, 25, 50, 100, 200].map(pageSize => (
                     <option key={pageSize} value={pageSize}>
@@ -484,4 +451,5 @@ export default function StarDataTable() {
         </Box>
       );
     }
+
 
