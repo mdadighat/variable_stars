@@ -5,8 +5,9 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/react": "^2.6.1",
-    "@emotion/react": "^11.11.0",
-    "@emotion/styled": "^11.11.0",
+    "@chakra-ui/color-mode": "^2.0.0",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-table": "^8.9.1",
     "@testing-library/jest-dom": "^5.16.5",
