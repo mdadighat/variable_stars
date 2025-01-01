@@ -51,7 +51,7 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 
 //import { ReactComponent as Logo } from '../assets/logo.svg';
-import { ReactComponent as DarkLogo } from '../assets/logo_dk.svg';
+import DarkLogo from '../assets/logo_dk.svg?react'
 import {RootState} from '../Store.tsx';
 import { useSelector, useDispatch } from 'react-redux'
 import { updateLatitude, updateLongitude, updateDateTime } from './slices/ObserverSlice'
