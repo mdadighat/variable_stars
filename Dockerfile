@@ -1,9 +1,18 @@
-# Use multi-stage build
+# Frontend build stage
 FROM node:16 AS frontend-build
 WORKDIR /app
+
+# Copy package files first for better caching
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
-COPY . ./
+
+# Copy source files
+COPY public ./public
+COPY src ./src
+COPY index.html .
+COPY vite.config.js .
+
+# Build the app
 RUN npm run build
 
 FROM python:3.11-slim
@@ -40,3 +49,14 @@ ENV PORT=8000
 
 # Run the application
 CMD ["gunicorn", "--config=gunicorn.conf.py", "base:app"]
+
+# Copy compressed SQL dump
+COPY backend/vsxdata.sql.gz ./core/
+
+# Install sqlite3
+RUN apt-get update && apt-get install -y sqlite3
+
+# Decompress and restore database
+RUN gunzip ./core/vsxdata.sql.gz && \
+    sqlite3 ./core/vsxdata.db < ./core/vsxdata.sql && \
+    rm ./core/vsxdata.sql
