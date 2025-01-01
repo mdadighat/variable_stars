@@ -33,7 +33,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend code maintaining structure
 COPY backend/core ./core
 COPY backend/base.py .
-COPY backend/vsxdata.db ./core/
 
 # Copy built frontend from previous stage
 COPY --from=frontend-build /app/build /app/core/build
